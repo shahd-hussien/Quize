@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Breast Pathology Quiz</title>
+    <title>Male Pathology Quiz</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,7 +11,7 @@
     <style>
         body {
             font-family: 'Tajawal', sans-serif;
-            background-color: #fce4ec;
+            background-color: #e3f2fd;
             padding: 1rem;
             display: flex;
             justify-content: center;
@@ -26,6 +26,7 @@
             background-color: #fff;
             border-radius: 1rem;
             box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            text-align: right;
         }
         .modal {
             display: flex;
@@ -74,42 +75,42 @@
             transform: translate(-50%, -50%) rotate(-30deg);
             font-size: 3rem;
             font-weight: bold;
-            color: rgba(255, 182, 193, 0.3);
+            color: rgba(173, 216, 230, 0.3);
             pointer-events: none;
             user-select: none;
             white-space: nowrap;
         }
     </style>
 </head>
-<body class="bg-pink-100 p-4">
+<body class="bg-blue-50 p-4">
 
     <div class="watermark">
         دفعة إكسير الشفاء
     </div>
 
     <div class="container">
-        <h1 class="text-3xl font-bold mb-6 text-gray-800 text-center">Breast Pathology Batch 14</h1>
+        <h1 class="text-3xl font-bold mb-6 text-gray-800 text-center">Male Pathology Quiz</h1>
 
         <div id="quiz-container">
-            <div id="quiz-question-card" class="bg-pink-50 p-6 rounded-lg mb-6 shadow-sm">
+            <div id="quiz-question-card" class="bg-blue-100 p-6 rounded-lg mb-6 shadow-sm">
                 <h2 id="quiz-question" class="text-xl font-semibold mb-4 text-gray-700"></h2>
-                <div id="quiz-options" class="space-y-3"></div>
+                <div id="quiz-options" class="space-y-3 text-left"></div>
             </div>
 
             <div id="quiz-feedback" class="text-lg font-medium text-center"></div>
-            <button id="quiz-next-button" class="mt-6 w-full px-6 py-3 bg-pink-600 text-white rounded-lg font-bold hover:bg-pink-700 transition duration-300 transform hover:scale-105 shadow-md">
-                السؤال التالي
+            <button id="quiz-next-button" class="mt-6 w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-md">
+                Next Question
             </button>
         </div>
 
         <!-- Modal for end-of-quiz message and review -->
         <div id="quiz-modal" class="modal hidden">
             <div class="modal-content">
-                <h2 id="modal-title" class="text-2xl font-bold mb-4">نتائج الاختبار</h2>
+                <h2 id="modal-title" class="text-2xl font-bold mb-4">Quiz Results</h2>
                 <p id="modal-message" class="text-lg mb-4"></p>
                 <div id="quiz-review" class="text-left mt-6 max-h-96 overflow-y-auto"></div>
-                <button id="modal-close-button" class="mt-6 w-full px-6 py-3 bg-pink-600 text-white rounded-lg font-bold hover:bg-pink-700 transition duration-300">
-                    إغلاق
+                <button id="modal-close-button" class="mt-6 w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition duration-300">
+                    Close
                 </button>
             </div>
         </div>
@@ -117,42 +118,44 @@
 
     <script>
         const questions = [
-            { question: "What is the most common benign tumor of the female breast?", options: ["A. Ductal papilloma", "B. Fibroadenoma", "C. Fibrocystic change", "D. Phyllodes tumor"], answer: "B. Fibroadenoma" },
-            { question: "Which of the following characteristics is a clinical feature of a fibroadenoma?", options: ["A. A fixed and painful mass", "B. A mobile and well-defined mass", "C. Blood-stained nipple discharge", "D. Peau d’orange skin"], answer: "B. A mobile and well-defined mass" },
-            { question: "What is the main cause of Fibrocystic change, according to the text?", options: ["A. Estrogen deficiency", "B. Bacterial infection", "C. Increased estrogen", "D. Physical trauma"], answer: "C. Increased estrogen" },
-            { question: "According to the text, what is the reason for the poor prognosis of male breast carcinoma?", options: ["A. It lacks the fibrofatty pad and can spread directly to the chest wall.", "B. It is typically diagnosed at a later stage.", "C. Its cellular type is more aggressive.", "D. It is not affected by hormonal therapies."], answer: "A. It lacks the fibrofatty pad and can spread directly to the chest wall." },
-            { question: "Which type of invasive carcinoma is characterized microscopically by an 'Indian filing pattern'?", options: ["A. Invasive ductal carcinoma", "B. Invasive lobular carcinoma", "C. Medullary carcinoma", "D. Tubular carcinoma"], answer: "B. Invasive lobular carcinoma" },
-            { question: "What is the prognosis for 'Carcinoma in situ' (CIS)?", options: ["A. It always has a poor prognosis.", "B. It has a good prognosis if completely removed and not associated with invasive carcinoma.", "C. It has no prognostic significance.", "D. Its prognosis depends solely on its subtype."], answer: "B. It has a good prognosis if completely removed and not associated with invasive carcinoma." },
-            { question: "What is the key microscopic feature associated with Traumatic Fat Necrosis?", options: ["A. Dilated ducts with secretions", "B. Ruptured fat cells with chronic inflammatory infiltrate", "C. Pleomorphic malignant cells", "D. Epithelial hyperplasia"], answer: "B. Ruptured fat cells with chronic inflammatory infiltrate" },
-            { question: "Which of the following is considered a major factor affecting the prognosis of breast cancer, according to the content?", options: ["A. Hormone receptor status", "B. Histological type", "C. Tumor size", "D. All of the above"], answer: "C. Tumor size" },
-            { question: "What is the condition that causes enlargement of male breast tissue?", options: ["A. Gynecomastia", "B. Male breast carcinoma", "C. Acute mastitis", "D. Fibrocystic change"], answer: "A. Gynecomastia" },
-            { question: "What is the key microscopic feature of Plasma Cell Mastitis (Mammary duct ectasia)?", options: ["A. Infiltration of neutrophils", "B. Periductal infiltration of lymphocytes and plasma cells", "C. Dilated ducts filled with secretions", "D. Ruptured fat cells"], answer: "B. Periductal infiltration of lymphocytes and plasma cells" },
-            { question: "Which of the following is a benign tumor composed of both epithelial and stromal components?", options: ["A. Invasive carcinoma", "B. Ductal papilloma", "C. Phyllodes tumor", "D. Fat necrosis"], answer: "C. Phyllodes tumor" },
-            { question: "What is a clinical feature of a Ductal papilloma?", options: ["A. A firm and mobile lump", "B. Blood-stained nipple discharge", "C. Peau d’orange skin", "D. A painful and well-defined mass"], answer: "B. Blood-stained nipple discharge" },
-            { question: "Which of the following conditions increases the risk of subsequent invasive carcinoma?", options: ["A. Fibrocystic change", "B. Traumatic fat necrosis", "C. Atypical hyperplasia", "D. Benign phyllodes tumor"], answer: "C. Atypical hyperplasia" },
-            { question: "Which subtype of Ductal Carcinoma in situ (DCIS) is characterized by the presence of necrotic material in the center of the ducts?", options: ["A. Cribriform carcinoma", "B. Comedo carcinoma", "C. Medullary carcinoma", "D. Solid carcinoma"], answer: "B. Comedo carcinoma" },
-            { question: "What is the correct microscopic description of Invasive Lobular Carcinoma?", options: ["A. Well-differentiated cells forming small ducts", "B. Highly pleomorphic malignant cells with lymphocytic infiltrate", "C. Small cells invading between stromal fibers in an 'Indian filing pattern'", "D. Cells floating in lakes of mucin"], answer: "C. Small cells invading between stromal fibers in an 'Indian filing pattern'" },
-            { question: "What is the histological description of Invasive Ductal Carcinoma (NST)?", options: ["A. Cells forming small tubules", "B. Pleomorphic malignant cells with a lymphocytic infiltrate", "C. Irregular ducts and glands invading the epithelial cells", "D. Small cells in an 'Indian filing pattern'"], answer: "C. Irregular ducts and glands invading the epithelial cells" },
-            { question: "What is the major prognostic factor related to the spread of the tumor?", options: ["A. Tumor size", "B. Hormonal factors", "C. Metastasis to lymph nodes or distant sites", "D. Age at diagnosis"], answer: "C. Metastasis to lymph nodes or distant sites" },
-            { question: "What factor distinguishes a Phyllodes tumor from a Fibroadenoma?", options: ["A. Age of occurrence", "B. Clinical appearance", "C. Tissue composition", "D. Stromal hypercellularity"], answer: "D. Stromal hypercellularity" },
-            { question: "What is the key clinical presentation of Traumatic Fat Necrosis?", options: ["A. A mobile and well-defined mass", "B. A firm mass that can mimic carcinoma", "C. Bloody nipple discharge", "D. Redness, pain, and swelling"], answer: "B. A firm mass that can mimic carcinoma" },
-            { question: "What are the characteristics of Medullary carcinoma?", options: ["A. A mucinous tumor with a glistening surface", "B. Pleomorphic malignant cells with lymphocytic infiltrate", "C. Signet ring-shaped cells", "D. Cells forming small tubules"], answer: "B. Pleomorphic malignant cells with lymphocytic infiltrate" },
-            { question: "What is a key difference between a Fibroadenoma and a Phyllodes tumor?", options: ["A. Fibroadenomas are always benign, and Phyllodes tumors are always malignant.", "B. Phyllodes tumors are distinguished by their stromal hypercellularity.", "C. Fibroadenomas occur at an older age.", "D. Fibroadenomas are much larger in size."], answer: "B. Phyllodes tumors are distinguished by their stromal hypercellularity." },
-            { question: "According to the content, what percentage of female cancers is breast carcinoma?", options: ["A. 30% of all female cancers", "B. 10% of all female cancers", "C. 50% of all female cancers", "D. 80% of all female cancers"], answer: "A. 30% of all female cancers" },
-            { question: "What is the most important factor in determining the prognosis of breast cancer, according to the text?", options: ["A. Histological type", "B. Hormonal receptors", "C. Presence of invasion (Invasive)", "D. Age at diagnosis"], answer: "C. Presence of invasion (Invasive)" },
-            { question: "What is the characteristic microscopic feature of Fibrocystic change?", options: ["A. Dilated ducts (cysts) and fibrosis of the stroma", "B. Pleomorphic malignant cells", "C. Plasma cell infiltration", "D. Fat necrosis"], answer: "A. Dilated ducts (cysts) and fibrosis of the stroma" },
-            { question: "Which of the following factors are considered minor prognostic factors for breast cancer?", options: ["A. Tumor size", "B. Metastasis to lymph nodes", "C. Hormone receptors", "D. All of the above"], answer: "C. Hormone receptors" },
-            { question: "What is the correct microscopic description of Tubular carcinoma?", options: ["A. Pleomorphic cells with lymphocytic infiltrate", "B. Well-differentiated cells forming small ducts or tubules", "C. Signet ring-shaped cells", "D. Cells floating in lakes of mucin"], answer: "B. Well-differentiated cells forming small ducts or tubules" },
-            { question: "According to the content, what is the typical age for a fibroadenoma?", options: ["A. Young women (25-35 years)", "B. Older women (45 years)", "C. Older women (35-55 years)", "D. Any age"], answer: "A. Young women (25-35 years)" },
-            { question: "What genetic factor increases the risk of breast cancer?", options: ["A. Mutations in BRCA1 and BRCA2 genes", "B. Mutations in the TP53 gene", "C. Atypical hyperplasia", "D. Fibrocystic change"], answer: "A. Mutations in BRCA1 and BRCA2 genes" },
-            { question: "Which of the following is considered a major prognostic factor for breast cancer?", options: ["A. Metastasis", "B. Histological type", "C. Hormone receptors", "D. Age"], answer: "A. Metastasis" },
-            { question: "What is the gross appearance of Plasma Cell Mastitis?", options: ["A. A firm mass that mimics carcinoma", "B. Dilated ducts filled with secretions", "C. A mobile and well-defined mass", "D. Peau d’orange skin"], answer: "B. Dilated ducts filled with secretions" },
-            { question: "What is the characteristic microscopic feature of Acute Mastitis?", options: ["A. Neutrophil infiltration", "B. Plasma cell infiltration", "C. Ductal dilation", "D. Fibrosis"], answer: "A. Neutrophil infiltration" },
-            { question: "What is the microscopic appearance of Paget disease of the breast?", options: ["A. Large cells with clear cytoplasm in the epidermis", "B. Pleomorphic tumor ducts", "C. Cells floating in lakes of mucin", "D. Ruptured fat cells"], answer: "A. Large cells with clear cytoplasm in the epidermis" },
-            { question: "Which tissues compose a fibroadenoma?", options: ["A. Epithelial cells", "B. Stromal cells", "C. Lymphocytes", "D. Both epithelial and stromal cells"], answer: "D. Both epithelial and stromal cells" },
-            { question: "According to the content, what is the incidence of male breast carcinoma?", options: ["A. Less than 1% of all breast cancers", "B. About 5%", "C. More than 10%", "D. It affects males more than females"], answer: "A. Less than 1% of all breast cancers" },
-            { question: "Which subtype of invasive carcinoma is composed of cells floating in lakes of mucin?", options: ["A. Medullary carcinoma", "B. Invasive lobular carcinoma", "C. Mucinous carcinoma", "D. Tubular carcinoma"], answer: "C. Mucinous carcinoma" },
-            { question: "What is the most important prognostic factor for breast cancer among the following?", options: ["A. Histological type", "B. Histological grade", "C. Presence of vascular invasion", "D. Metastasis to lymph nodes"], answer: "D. Metastasis to lymph nodes" }
+            { question: "What is the most common form of bacterial orchitis?", options: ["A. Syphilitic orchitis", "B. Gram-negative bacterial orchitis", "C. Mumps orchitis", "D. Granulomatous orchitis"], answer: "B. Gram-negative bacterial orchitis" },
+            { question: "What is the most common testicular cancer?", options: ["A. Embryonal carcinoma", "B. Teratoma", "C. Yolk sac tumor", "D. Seminoma"], answer: "D. Seminoma" },
+            { question: "What is the definition of Cryptorchidism?", options: ["A. A congenital abnormality where one or both testes are not in the scrotum", "B. Inflammation of the testis", "C. Dilatation of the pampiniform plexus of veins", "D. Accumulation of serous fluid in the tunica vaginalis"], answer: "A. A congenital abnormality where one or both testes are not in the scrotum" },
+            { question: "What is the key prognostic factor for a Seminoma?", options: ["A. It is radioresistant.", "B. It commonly metastasizes to bone.", "C. It is typically diagnosed at a late stage.", "D. It is radiosensitive and has an excellent prognosis."], answer: "D. It is radiosensitive and has an excellent prognosis." },
+            { question: "What is the age group with the peak incidence of Seminoma?", options: ["A. Men between 30 and 40 years old", "B. Children under 4 years old", "C. Men above 60 years old", "D. Men over 80 years old"], answer: "A. Men between 30 and 40 years old" },
+            { question: "What is the main tumor marker associated with a Yolk sac tumor?", options: ["A. Human Chorionic Gonadotropin (HCG)", "B. Placental Alkaline Phosphatase", "C. Alpha-fetoprotein (AFP)", "D. Lactate Dehydrogenase (LDH)"], answer: "C. Alpha-fetoprotein (AFP)" },
+            { question: "Which of the following describes the microscopic picture of a Seminoma?", options: ["A. Cells floating in lakes of mucin", "B. Uniform polygonal cells with pale cytoplasm separated by fibrous septa infiltrated with lymphocytes", "C. Small cells invading between stromal fibers", "D. Highly pleomorphic cells with extensive hemorrhage"], answer: "B. Uniform polygonal cells with pale cytoplasm separated by fibrous septa infiltrated with lymphocytes" },
+            { question: "What is a key difference in prognosis between seminoma and non-seminoma germ cell tumors?", options: ["A. Seminoma has a favorable prognosis, while non-seminoma has a poor prognosis.", "B. Seminoma is radioresistant, while non-seminoma is radiosensitive.", "C. Seminoma has a poor prognosis, while non-seminoma has a good prognosis.", "D. Seminoma spreads more via blood, while non-seminoma spreads more via lymphatics."], answer: "A. Seminoma has a favorable prognosis, while non-seminoma has a poor prognosis." },
+            { question: "What is the definition of Varicocele?", options: ["A. Inflammation of the testis and epididymis", "B. A congenital anomaly of testicular descent", "C. Accumulation of fluid in the tunica vaginalis", "D. Dilatation and tortuosity of the pampiniform plexus of veins"], answer: "D. Dilatation and tortuosity of the pampiniform plexus of veins" },
+            { question: "What is the most common cause of Acute Prostatitis?", options: ["A. Viral infection", "B. Trauma", "C. Reflux of infected urine into the prostate", "D. Hormonal changes"], answer: "C. Reflux of infected urine into the prostate" },
+            { question: "What is the definition of Hydrocele?", options: ["A. Accumulation of serous fluid in the tunica vaginalis", "B. Inflammation of the prostate gland", "C. Dilation of the testicular veins", "D. Enlargement of the prostate gland"], answer: "A. Accumulation of serous fluid in the tunica vaginalis" },
+            { question: "What is a key clinical feature of Testicular Seminoma?", options: ["A. A small testis", "B. A painless enlarged testis", "C. Painful testicular enlargement", "D. Nipple discharge"], answer: "B. A painless enlarged testis" },
+            { question: "Which testicular tumor is composed of three cell types: large, small, and intermediate?", options: ["A. Spermatocytic seminoma", "B. Seminoma", "C. Embryonal carcinoma", "D. Leydig cell tumor"], answer: "A. Spermatocytic seminoma" },
+            { question: "What is the most common non-seminomatous germ cell tumor?", options: ["A. Yolk sac tumor", "B. Embryonal carcinoma", "C. Choriocarcinoma", "D. Teratoma"], answer: "B. Embryonal carcinoma" },
+            { question: "What is the characteristic microscopic picture of a Choriocarcinoma?", options: ["A. Well-differentiated cells forming small tubules", "B. Malignant cells arranged in a reticular pattern", "C. Malignant cytotrophoblasts and syncitiotrophoblasts with hemorrhage and necrosis", "D. Uniform polygonal cells with pale cytoplasm"], answer: "C. Malignant cytotrophoblasts and syncitiotrophoblasts with hemorrhage and necrosis" },
+            { question: "Which of the following is a predisposing factor for testicular tumors?", options: ["A. Cryptorchidism", "B. Prostatitis", "C. Varicocele", "D. Hydrocele"], answer: "A. Cryptorchidism" },
+            { question: "What is the characteristic feature of a Teratoma in the gross picture?", options: ["A. Haemorrhage and necrosis", "B. A small yellowish tumor with cysts", "C. A firm, bosselated mass", "D. A solid tumor with bone, teeth, sebum, and hair"], answer: "D. A solid tumor with bone, teeth, sebum, and hair" },
+            { question: "Which of the following is a characteristic of Immature Teratoma?", options: ["A. Benign behavior", "B. Immature elements, especially neural tissue", "C. All elements are mature", "D. A single element showing malignant transformation"], answer: "B. Immature elements, especially neural tissue" },
+            { question: "What is the definition of Benign Prostatic Hyperplasia (BPH)?", options: ["A. Proliferation of glands and stroma causing urinary outflow obstruction", "B. Inflammation of the prostate", "C. A malignant tumor of the prostate", "D. A precancerous lesion of the prostate"], answer: "A. Proliferation of glands and stroma causing urinary outflow obstruction" },
+            { question: "What is the key microscopic difference between Nodular Prostatic Hyperplasia (NPH) and Prostatic Carcinoma?", options: ["A. NPH has small acini, while carcinoma has large acini.", "B. NPH has a single cell layer, while carcinoma has a double cell layer.", "C. NPH is located in the peripheral zone, while carcinoma is in the transitional zone.", "D. NPH has large acini with double cell layers, while carcinoma has small acini with a single cell layer."], answer: "D. NPH has large acini with double cell layers, while carcinoma has small acini with a single cell layer." },
+            { question: "What is the most common form of inflammation found in prostatic biopsy specimens?", options: ["A. Acute prostatitis", "B. Nonbacterial prostatitis", "C. Chronic bacterial prostatitis", "D. Granulomatous prostatitis"], answer: "B. Nonbacterial prostatitis" },
+            { question: "What is the prognosis of a pure Choriocarcinoma?", options: ["A. Highly aggressive", "B. Excellent prognosis", "C. Good prognosis if completely removed", "D. Benign"], answer: "A. Highly aggressive" },
+            { question: "What is the function of the enzyme 5 alpha reductase in the pathogenesis of Benign Prostatic Hyperplasia (BPH)?", options: ["A. It produces testosterone.", "B. It causes regression of the prostate.", "C. It activates the androgen receptors directly.", "D. It transforms testosterone into dihydrotestosterone (DHT)."], answer: "D. It transforms testosterone into dihydrotestosterone (DHT)." },
+            { question: "What is the typical age group for Prostatic carcinoma?", options: ["A. 60-80 years", "B. 20-30 years", "C. 40-50 years", "D. Any age"], answer: "A. 60-80 years" },
+            { question: "Which of the following is considered a premalignant change that can progress to prostatic adenocarcinoma?", options: ["A. Nodular hyperplasia", "B. Acute prostatitis", "C. Prostatic intraepithelial neoplasia (PIN)", "D. Granulomatous prostatitis"], answer: "C. Prostatic intraepithelial neoplasia (PIN)" },
+            { question: "What is the significance of the Gleason score in prostatic adenocarcinoma?", options: ["A. It indicates whether the tumor is benign or malignant.", "B. It is the sum of the most prominent pattern and the minority pattern.", "C. It is a measure of the tumor's size.", "D. None of the above."], answer: "B. It is the sum of the most prominent pattern and the minority pattern." },
+            { question: "What is the microscopic characteristic of Leydig cell tumors?", options: ["A. Uniform cells with round nuclei and eosinophilic cytoplasm", "B. Cells arranged into tubules or cords", "C. Small cells in an Indian filing pattern", "D. Pleomorphic malignant cells with lymphocytic infiltrate"], answer: "A. Uniform cells with round nuclei and eosinophilic cytoplasm" },
+            { question: "Where does Prostatic adenocarcinoma commonly originate?", options: ["A. Transitional zone", "B. Central zone", "C. Urethra", "D. Peripheral zone"], answer: "D. Peripheral zone" },
+            { question: "What is a complication of prolonged Hydrocele?", options: ["A. Prostatitis", "B. Epididymitis", "C. Atrophy and fibrosis of the testis", "D. Testicular tumors"], answer: "C. Atrophy and fibrosis of the testis" },
+            { question: "What is the characteristic microscopic picture of a Sertoli cell tumor?", options: ["A. Uniform cells with eosinophilic cytoplasm", "B. Malignant cells with extensive hemorrhage", "C. Cells floating in lakes of mucin", "D. Columnar tumor cells arranged into tubules or cords"], answer: "D. Columnar tumor cells arranged into tubules or cords" },
+            { question: "What is a clinical presentation of Prostatic adenocarcinoma?", options: ["A. Painful testicular enlargement", "B. Bladder outlet obstruction due to a metastatic tumor", "C. Blood-stained nipple discharge", "D. Firm, mobile, well-defined mass"], answer: "B. Bladder outlet obstruction due to a metastatic tumor" },
+            { question: "What is the most common cause of Cryptorchidism?", options: ["A. Endocrine factors and mechanical factors", "B. Trauma", "C. Bacterial infection", "D. Inflammation"], answer: "A. Endocrine factors and mechanical factors" },
+            { question: "What is a key difference in the spread of Seminoma versus Non-seminoma germ cell tumors?", options: ["A. Seminoma spreads more via blood, while non-seminoma spreads more via lymphatics.", "B. Both spread equally via lymphatics and blood.", "C. Seminoma spreads more via lymphatics, while non-seminoma spreads more via blood.", "D. Neither spreads via the lymphatic system."], answer: "C. Seminoma spreads more via lymphatics, while non-seminoma spreads more via blood." },
+            { question: "Which tumor marker is elevated in Choriocarcinoma?", options: ["A. AFP", "B. HCG", "C. PSA", "D. LDH"], answer: "B. HCG" },
+            { question: "What is a characteristic of Granulomatous orchitis?", options: ["A. It is an immune-mediated disorder with non-caseating granulomas.", "B. It is caused by a bacterial infection.", "C. It is a type of acute inflammation.", "D. It is most common in children."], answer: "A. It is an immune-mediated disorder with non-caseating granulomas." },
+            { question: "What is the definition of orchitis?", options: ["A. Inflammation of the prostate", "B. Inflammation of the testis", "C. A congenital abnormality of the testis", "D. Dilatation of testicular veins"], answer: "B. Inflammation of the testis" },
+            { question: "What is the most common site of metastasis for Prostatic carcinoma?", options: ["A. Lung", "B. Liver", "C. Brain", "D. Bone (vertebral column)"], answer: "D. Bone (vertebral column)" },
+            { question: "What is the microscopic picture of Chronic bacterial prostatitis?", options: ["A. Infiltrates of lymphocytes, plasma cells, and macrophages", "B. Infiltrates of neutrophils", "C. Ruptured fat cells", "D. None of the above"], answer: "A. Infiltrates of lymphocytes, plasma cells, and macrophages" }
         ];
 
         const userAnswers = [];
@@ -190,7 +193,7 @@
             shuffledOptions.forEach(option => {
                 const button = document.createElement('button');
                 button.textContent = option;
-                button.classList.add('w-full', 'py-2', 'px-4', 'bg-pink-200', 'rounded-lg', 'text-gray-800', 'font-medium', 'hover:bg-pink-300', 'transition', 'duration-200', 'transform', 'hover:scale-105');
+                button.classList.add('w-full', 'py-2', 'px-4', 'bg-blue-200', 'rounded-lg', 'text-gray-800', 'font-medium', 'hover:bg-blue-300', 'transition', 'duration-200', 'transform', 'hover:scale-105');
                 button.addEventListener('click', () => selectOption(option));
                 optionsElement.appendChild(button);
             });
@@ -208,12 +211,12 @@
             });
 
             if (isCorrect) {
-                feedbackElement.textContent = 'إجابة صحيحة!';
+                feedbackElement.textContent = 'Correct Answer!';
                 feedbackElement.classList.remove('text-red-500');
                 feedbackElement.classList.add('text-green-600');
                 score++;
             } else {
-                feedbackElement.textContent = `إجابة خاطئة. الإجابة الصحيحة هي: ${currentQuestion.answer}`;
+                feedbackElement.textContent = `Wrong Answer. The correct answer is: ${currentQuestion.answer}`;
                 feedbackElement.classList.remove('text-green-600');
                 feedbackElement.classList.add('text-red-500');
             }
@@ -222,10 +225,10 @@
                 button.disabled = true;
                 if (button.textContent === currentQuestion.answer) {
                     button.classList.add('bg-green-500', 'text-white');
-                    button.classList.remove('bg-pink-200', 'hover:bg-pink-300');
+                    button.classList.remove('bg-blue-200', 'hover:bg-blue-300');
                 } else if (button.textContent === selectedOption) {
                     button.classList.add('bg-red-500', 'text-white');
-                    button.classList.remove('bg-pink-200', 'hover:bg-pink-300');
+                    button.classList.remove('bg-blue-200', 'hover:bg-blue-300');
                 }
                 button.classList.remove('hover:scale-105');
             });
@@ -246,15 +249,17 @@
             const totalQuestions = questions.length;
             const percentage = (score / totalQuestions) * 100;
 
-            modalTitle.textContent = "نتائج الاختبار";
+            modalTitle.textContent = "Quiz Results";
             if (percentage === 100) {
-                modalMessage.textContent = 'فل مارك!😳😳';
+                modalMessage.textContent = "كفو 🙂‍↔️";
+            } else if (percentage >= 85) {
+                modalMessage.textContent = "اداء لا بأس به تحياتي 🕊️🌹";
             } else if (percentage >= 60) {
-                modalMessage.textContent = `ادائك نص و نص 🫴🏻🫳🏻بس ناجح عادي`;
+                modalMessage.textContent = "ناجح لكن مش احلى شي🤷🏻‍♀️";
             } else {
-                modalMessage.textContent = 'ادائك مش ولابد😟😟';
+                modalMessage.textContent = "ادائك مررره لا ☹️";
             }
-            modalMessage.textContent += ` (درجتك: ${score} / ${totalQuestions}, ${percentage.toFixed(0)}%)`;
+            modalMessage.textContent += ` (Your score: ${score} / ${totalQuestions}, ${percentage.toFixed(0)}%)`;
 
             displayReview();
             modal.classList.remove('hidden');
@@ -263,24 +268,24 @@
         }
 
         function displayReview() {
-            quizReview.innerHTML = '<h3 class="text-xl font-bold mb-4">مراجعة الإجابات</h3>';
+            quizReview.innerHTML = '<h3 class="text-xl font-bold mb-4">Answer Review</h3>';
             userAnswers.forEach((answer, index) => {
                 const reviewItem = document.createElement('div');
                 reviewItem.classList.add('review-item');
                 
                 const questionTitle = document.createElement('p');
                 questionTitle.classList.add('font-semibold', 'mb-2');
-                questionTitle.textContent = `السؤال ${index + 1}: ${answer.question}`;
+                questionTitle.textContent = `Question ${index + 1}: ${answer.question}`;
                 reviewItem.appendChild(questionTitle);
 
                 const yourAnswer = document.createElement('p');
-                yourAnswer.textContent = `إجابتك: ${answer.selected}`;
+                yourAnswer.textContent = `Your Answer: ${answer.selected}`;
                 if (answer.isCorrect) {
                     yourAnswer.classList.add('correct-answer');
                 } else {
                     yourAnswer.classList.add('wrong-answer');
                     const correctAnswer = document.createElement('p');
-                    correctAnswer.textContent = `الإجابة الصحيحة: ${answer.correct}`;
+                    correctAnswer.textContent = `Correct Answer: ${answer.correct}`;
                     correctAnswer.classList.add('correct-answer');
                     reviewItem.appendChild(correctAnswer);
                 }
@@ -297,7 +302,7 @@
             modal.classList.add('hidden');
             document.getElementById('quiz-container').classList.remove('hidden');
             showQuestion();
-            nextButton.textContent = 'السؤال التالي';
+            nextButton.textContent = 'Next Question';
         }
 
         nextButton.addEventListener('click', handleNextButton);
