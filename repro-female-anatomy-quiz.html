@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproductive Female Anatomy Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f5f5dc; /* Beige */
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            position: relative;
+            max-width: 600px;
+            width: 100%;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        .modal {
+            display: flex;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            max-width: 90%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-out;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .review-item {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+        .correct-answer {
+            color: #4b5563; /* Gray-700 */
+        }
+        .wrong-answer {
+            color: #dc2626; /* Red-600 */
+        }
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 3rem;
+            font-weight: bold;
+            color: rgba(75, 85, 99, 0.1); /* Gray-600 with transparency */
+            pointer-events: none;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 9999px;
+            height: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #7b3f00; /* Dark brown */
+            transition: width 0.4s ease;
+        }
+    </style>
+</head>
+<body class="bg-amber-50 p-4">
+
+    <div class="watermark">
+        Scientific Journey
+    </div>
+
+    <div class="container">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800 text-center">Reproductive Female Anatomy Quiz</h1>
+        
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+        </div>
+
+        <div id="quiz-container">
+            <div id="quiz-question-card" class="bg-gray-100 p-6 rounded-lg mb-6 shadow-sm">
+                <h2 id="quiz-question" class="text-xl font-semibold mb-4 text-gray-700 text-left"></h2>
+                <div id="quiz-options" class="space-y-3 text-left"></div>
+            </div>
+
+            <div id="quiz-feedback" class="text-lg font-medium text-center"></div>
+            <button id="quiz-next-button" class="mt-6 w-full px-6 py-3 bg-stone-700 text-white rounded-lg font-bold hover:bg-stone-800 transition duration-300 transform hover:scale-105 shadow-md">
+                Next Question
+            </button>
+        </div>
+
+        <!-- Modal for end-of-quiz message and review -->
+        <div id="quiz-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="modal-title" class="text-2xl font-bold mb-4">Quiz Results</h2>
+                <p id="modal-message" class="text-lg mb-4"></p>
+                <div id="quiz-review" class="text-left mt-6 max-h-96 overflow-y-auto"></div>
+                <button id="modal-close-button" class="mt-6 w-full px-6 py-3 bg-stone-700 text-white rounded-lg font-bold hover:bg-stone-800 transition duration-300">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "What is the characteristic feature of Mons Pubis hair in a female?", options: ["A. It has a convex upper border.", "B. It is a mass of fat without hair.", "C. It has an upper straight border.", "D. It overlies the ischial spines."], answer: "C. It has an upper straight border." },
+            { question: "What type of glands are found in the skin of the Labia Majora and are responsible for a characteristic odor?", options: ["A. Sebaceous glands", "B. Eccrine glands", "C. Apocrine glands", "D. Skene glands"], answer: "C. Apocrine glands" },
+            { question: "The Labia Minora are primarily composed of what type of tissue?", options: ["A. A mass of fat", "B. Nonkeratinized pigmented skin", "C. Keratinized epithelium", "D. Dense fibrous tissue"], answer: "B. Nonkeratinized pigmented skin" },
+            { question: "What is the term for the sharp fold of skin formed by the posterior union of the Labia Minora?", options: ["A. Fossa navicularis", "B. Fourchette", "C. Frenulum of the clitoris", "D. Hymen"], answer: "B. Fourchette" },
+            { question: "What is the length of the female urethra in an adult?", options: ["A. 1 cm", "B. 3-4 cm", "C. 5-6 cm", "D. 2 cm"], answer: "B. 3-4 cm" },
+            { question: "The proximal two-thirds of the female urethra are lined by which type of epithelium?", options: ["A. Stratified squamous epithelium", "B. Simple columnar epithelium", "C. Transitional epithelium", "D. Pseudostratified columnar epithelium"], answer: "C. Transitional epithelium" },
+            { question: "The Hymen consists of fibrous tissue covered on both sides by what type of epithelium?", options: ["A. Simple squamous", "B. Stratified squamous", "C. Transitional", "D. Columnar ciliated"], answer: "B. Stratified squamous" },
+            { question: "What are the \"small tags or nodules of fibrous tissue\" left after the hymen is destroyed during delivery called?", options: ["A. Vestibular bulbs", "B. Fossa navicularis", "C. Carunculae myrtiförmes", "D. Skene tubules"], answer: "C. Carunculae myrtiförmes" },
+            { question: "The Bartholin glands are homologous to which male structure?", options: ["A. Prostate", "B. Bulbourethral glands (Cowper glands)", "C. Seminal vesicles", "D. Testis"], answer: "B. Bulbourethral glands (Cowper glands)" },
+            { question: "What is the function of the secretion produced by the Bartholin glands?", options: ["A. To provide nutrients for spermatozoa", "B. To act as a lubricant for coitus", "C. To prevent the ascent of infection", "D. To break down glycogen into lactic acid"], answer: "B. To act as a lubricant for coitus" },
+            { question: "The external urethral meatus, the vaginal orifice, and Bartholin glands all open at the floor of which area?", options: ["A. Mons Pubis", "B. Fossa navicularis", "C. Vestibule", "D. Fourchette"], answer: "C. Vestibule" },
+            { question: "What is the anatomical relationship of the ureter to the uterine artery?", options: ["A. The ureter passes anterior to the uterine artery.", "B. The ureter passes posterior to the uterine artery.", "C. The uterine artery crosses over the ureter.", "D. The uterine artery crosses under the ureter."], answer: "C. The uterine artery crosses over the ureter." },
+            { question: "The pH of the vagina is normally kept acidic by the breakdown of glycogen into lactic acid by which bacteria?", options: ["A. E. coli", "B. Döderlein bacilli", "C. Gonococci", "D. Streptococci"], answer: "B. Döderlein bacilli" },
+            { question: "Which hormone is responsible for stimulating the deposition of glycogen in the vaginal mucosa?", options: ["A. Progesterone", "B. Estrogen", "C. Testosterone", "D. Relaxin"], answer: "B. Estrogen" },
+            { question: "The inner muscle layer of the vagina is composed of which type of muscle fibers?", options: ["A. Outer longitudinal and inner circular", "B. Outer circular and inner longitudinal", "C. All longitudinal", "D. All circular"], answer: "B. Outer circular and inner longitudinal" },
+            { question: "The lower third of the vagina receives its nerve supply from which nerve?", options: ["A. Ilioinguinal nerve", "B. Genitofemoral nerve", "C. Pudendal nerve", "D. Ovarian plexus"], answer: "C. Pudendal nerve" },
+            { question: "The uterus of a nullipara woman has what approximate dimensions?", options: ["A. 1 x 2 x 3 inches", "B. 1.5 x 2.5 x 3.5 inches", "C. 1 x 3 x 4 inches", "D. 2 x 3 x 4 inches"], answer: "A. 1 x 2 x 3 inches" },
+            { question: "What is the name of the area of the uterine body that is above the insertion of the fallopian tubes?", options: ["A. Isthmus", "B. Cervix", "C. Cornu", "D. Fundus"], answer: "D. Fundus" },
+            { question: "The cervix is approximately what length?", options: ["A. 1 cm", "B. 1 inch", "C. 2 inches", "D. 3 inches"], answer: "B. 1 inch" },
+            { question: "What is the name of the narrow part of the uterus that is 1/2-1 cm in length, located below the anatomical internal os?", options: ["A. Cervix", "B. Isthmus", "C. Fundus", "D. Cornu"], answer: "B. Isthmus" },
+            { question: "What is the name for the middle, interlacing layer of smooth muscle fibers in the myometrium that help control bleeding?", options: ["A. Inner circular layer", "B. Outer longitudinal layer", "C. Living ligatures", "D. Perimetrium"], answer: "C. Living ligatures" },
+            { question: "What is the pH of the cervical mucus?", options: ["A. pH 3.5-4.5", "B. pH 7.0", "C. pH 8.5", "D. pH 6.0-7.0"], answer: "C. pH 8.5" },
+            { question: "What is the name of the longitudinal folds in the mucous membrane of the endocervical canal of a nullipara woman?", options: ["A. Plicae palmatae", "B. Rugae", "C. Carunculae", "D. Arbor vitae"], answer: "A. Plicae palmatae" },
+            { question: "The sympathetic nerve fibers that supply the uterus are derived from which plexus?", options: ["A. Pudendal nerve plexus", "B. Hypogastric plexus", "C. Sacral plexus", "D. Ovarian plexus"], answer: "B. Hypogastric plexus" },
+            { question: "The uterus is sensitive to which of the following sensations?", options: ["A. Burning", "B. Cutting", "C. Freezing", "D. Distension"], answer: "D. Distension" },
+            { question: "The round ligaments are supplied by which two arteries?", options: ["A. Uterine and internal iliac arteries", "B. Sampson and inferior epigastric arteries", "C. Internal pudendal and femoral arteries", "D. Uterine and ovarian arteries"], answer: "B. Sampson and inferior epigastric arteries" },
+            { question: "What is the name for the fold of peritoneum that attaches the ovary to the posterior layer of the broad ligament?", options: ["A. Infundibulopelvic ligament", "B. Mesovarium", "C. Ovarian ligament", "D. Round ligament"], answer: "B. Mesovarium" },
+            { question: "Which of the following structures is NOT contained within the broad ligament?", options: ["A. The uterine artery", "B. The fallopian tube", "C. The cervix", "D. The round ligament"], answer: "A. The uterine artery" },
+            { question: "The ureter passes through which of the following cervical ligaments?", options: ["A. Uterosacral ligaments", "B. Pubocervical ligaments", "C. Transverse cervical ligaments", "D. Ovarian ligaments"], answer: "C. Transverse cervical ligaments" },
+            { question: "What is the definition of a retroverted uterus?", options: ["A. The body of the uterus is bent forwards on the cervix.", "B. The cervix is bent forwards on the vagina.", "C. The cervix is bent on the vagina, so the external os points downwards and forwards.", "D. The uterus is bent backwards on the cervix."], answer: "C. The cervix is bent on the vagina, so the external os points downwards and forwards." },
+            { question: "The uterus is normally anteverted and anteflexed. Anteflexion is due to:", options: ["A. The weight of abdominal organs.", "B. Development of tone in the uterosacral ligaments.", "C. More growth of the posterior than the anterior wall of the uterus.", "D. Contraction of the isthmus."], answer: "C. More growth of the posterior than the anterior wall of the uterus." },
+            { question: "What is the length and diameter of the interstitial portion of the fallopian tube?", options: ["A. 2-3 cm in length and 2 mm in diameter", "B. 5 cm in length and 1 mm in diameter", "C. 1-2 cm in length and 1 mm in diameter", "D. 10 cm in length and 2 mm in diameter"], answer: "C. 1-2 cm in length and 1 mm in diameter" },
+            { question: "The fallopian tube receives blood supply from which two arteries?", options: ["A. Uterine and internal iliac arteries", "B. Ovarian and uterine arteries", "C. Inferior epigastric and femoral arteries", "D. Internal pudendal and middle rectal arteries"], answer: "B. Ovarian and uterine arteries" },
+            { question: "What is the name of the dense layer of connective tissue that covers the ovary?", options: ["A. Tunica vaginalis", "B. Tunica albuginea", "C. Germinal epithelium", "D. Medulla"], answer: "B. Tunica albuginea" },
+            { question: "The ovary is the only organ in the abdomen that is not covered by what?", options: ["A. Muscularis", "B. Peritoneum", "C. Tunica albuginea", "D. Cortex"], answer: "B. Peritoneum" },
+            { question: "What is the name of the single node present in the femoral canal, which is a deep femoral node?", options: ["A. Superficial inguinal node", "B. Cloquet's or Rosenmuller's node", "C. Obturator node", "D. External iliac node"], answer: "B. Cloquet's or Rosenmuller's node" },
+            { question: "The upper two-thirds of the vagina drain lymphatics with which organ?", options: ["A. The vulva", "B. The cervix", "C. The uterus fundus", "D. The ovaries"], answer: "B. The cervix" },
+            { question: "What is the function of the \"fibres of Lushka\" from the pubococcygeus muscle?", options: ["A. They insert into the urethral wall.", "B. They form a strong vaginal sphincter.", "C. They are inserted into the rectal walls.", "D. They support the bladder."], answer: "B. They form a strong vaginal sphincter." },
+            { question: "What are the actions of the sympathetic nerve fibers that supply the uterus?", options: ["A. Muscular contraction and vasoconstriction", "B. Muscular relaxation and vasoconstriction", "C. Muscular contraction and vasodilation", "D. Muscular relaxation and vasodilation"], answer: "B. Muscular relaxation and vasoconstriction" },
+            { question: "The vaginal vault is divided into four areas by the piercing of which structure?", options: ["A. The urethra", "B. The cervix", "C. The rectum", "D. The perineal body"], answer: "B. The cervix" },
+            { question: "The uterus is related anteriorly to the urinary bladder and what other structure?", options: ["A. Douglas pouch", "B. Loops of intestine", "C. Uterovesical pouch", "D. Broad ligament"], answer: "C. Uterovesical pouch" },
+            { question: "The middle third of the posterior vaginal wall is related to what structure?", options: ["A. The perineal body", "B. The peritoneum of Douglas pouch", "C. The ampulla of the rectum", "D. The bladder"], answer: "C. The ampulla of the rectum" },
+            { question: "The myometrium's outer layer of muscle fibers is arranged as:", options: ["A. Interlacing", "B. Circular", "C. Longitudinal", "D. Oblique"], answer: "C. Longitudinal" },
+            { question: "Which part of the cervix is covered by stratified squamous epithelium?", options: ["A. The entire cervical canal", "B. The endocervix", "C. The portio vaginalis", "D. The isthmus"], answer: "C. The portio vaginalis" },
+            { question: "Which artery branch supplies the Mons Pubis?", options: ["A. Superficial external pudendal artery", "B. Deep external pudendal artery", "C. Internal pudendal artery", "D. Inferior epigastric artery"], answer: "D. Inferior epigastric artery" },
+            { question: "The hymen is said to contain \"few\" blood vessels, resulting in what during rupture?", options: ["A. Profuse bleeding", "B. Severe pain", "C. Slight bleeding", "D. A large amount of blood loss"], answer: "C. Slight bleeding" },
+            { question: "The length of the posterior vaginal wall is approximately:", options: ["A. 2 inches", "B. 3 inches", "C. 4 inches", "D. 5 inches"], answer: "C. 4 inches" },
+            { question: "Which part of the fallopian tube is the widest and longest?", options: ["A. The interstitial portion", "B. The isthmus", "C. The ampulla", "D. The infundibulum"], answer: "C. The ampulla" },
+            { question: "What is the main action of the Ischiocavernosus muscle?", options: ["A. Compressing the rectum sphincter", "B. Maintaining erection of the clitoris", "C. Supporting pelvic organs", "D. Compressing the external anal sphincter"], answer: "B. Maintaining erection of the clitoris" },
+            { question: "The nerve supply to the Levator Ani muscle is from which two nerves?", options: ["A. Pudendal and ilioinguinal nerves", "B. Pudendal and sciatic nerves", "C. Perineal branch of the 4th sacral and inferior hemorrhoidal nerves", "D. Genitofemoral and pudendal nerves"], answer: "C. Perineal branch of the 4th sacral and inferior hemorrhoidal nerves" },
+            { question: "Which part of the Levator Ani muscle is pierced by the urethra, vagina, and rectum?", options: ["A. Iliococcygeus", "B. Ischiococcygeus", "C. Pubococcygeus", "D. Puborectalis"], answer: "C. Pubococcygeus" },
+            { question: "The round ligaments are inserted into which part of the vulva?", options: ["A. The clitoris", "B. The perineal body", "C. The Labia Minora", "D. The upper part of the Labia Majora"], answer: "D. The upper part of the Labia Majora" },
+            { question: "What is the weight of the uterus in a multipara woman?", options: ["A. 40-50 gm", "B. 70-80 gm", "C. 90-100 gm", "D. 120-130 gm"], answer: "B. 70-80 gm" },
+            { question: "The ovary is supplied by nerves from which plexus?", options: ["A. Hypogastric plexus", "B. Sacral plexus", "C. Ovarian plexus", "D. Pudendal plexus"], answer: "C. Ovarian plexus" },
+            { question: "The upper part of the uterus drain lymph to which lymph nodes?", options: ["A. External iliac lymph nodes", "B. Aortic lymph nodes", "C. Inguinal lymph nodes", "D. Sacral lymph nodes"], answer: "B. Aortic lymph nodes" },
+            { question: "In which part of the fallopian tube does the sphincter that delays the passage of the fertilized ovum exist?", options: ["A. Isthmus", "B. Ampulla", "C. Infundibulum", "D. Uterotubal junction"], answer: "D. Uterotubal junction" },
+            { question: "The anterior vaginal wall is related to the urinary bladder, urethra, and which other structure?", options: ["A. Perineal body", "B. Skene tubules", "C. Douglas pouch", "D. Bartholin glands"], answer: "B. Skene tubules" },
+        ];
+
+        const userAnswers = [];
+
+        const questionElement = document.getElementById('quiz-question');
+        const optionsElement = document.getElementById('quiz-options');
+        const nextButton = document.getElementById('quiz-next-button');
+        const feedbackElement = document.getElementById('quiz-feedback');
+        const modal = document.getElementById('quiz-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const quizReview = document.getElementById('quiz-review');
+        const modalCloseButton = document.getElementById('modal-close-button');
+        const progressBar = document.getElementById('progress-bar');
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function updateProgressBar() {
+            const progressPercentage = ((currentQuestionIndex) / questions.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionElement.textContent = currentQuestion.question;
+            optionsElement.innerHTML = '';
+            feedbackElement.textContent = '';
+            nextButton.style.display = 'none';
+
+            const shuffledOptions = shuffle([...currentQuestion.options]);
+
+            shuffledOptions.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.classList.add('w-full', 'py-2', 'px-4', 'bg-stone-200', 'rounded-lg', 'text-gray-800', 'font-medium', 'hover:bg-stone-300', 'transition', 'duration-200', 'transform', 'hover:scale-105');
+                button.addEventListener('click', () => selectOption(option));
+                optionsElement.appendChild(button);
+            });
+            updateProgressBar();
+        }
+
+        function selectOption(selectedOption) {
+            const currentQuestion = questions[currentQuestionIndex];
+            const isCorrect = selectedOption === currentQuestion.answer;
+
+            userAnswers.push({
+                question: currentQuestion.question,
+                selected: selectedOption,
+                correct: currentQuestion.answer,
+                isCorrect: isCorrect
+            });
+
+            if (isCorrect) {
+                feedbackElement.textContent = 'Correct Answer!';
+                feedbackElement.classList.remove('text-red-600');
+                feedbackElement.classList.add('text-green-600');
+                score++;
+            } else {
+                feedbackElement.textContent = `Wrong Answer. The correct answer is: ${currentQuestion.answer}`;
+                feedbackElement.classList.remove('text-green-600');
+                feedbackElement.classList.add('text-red-600');
+            }
+
+            Array.from(optionsElement.children).forEach(button => {
+                button.disabled = true;
+                if (button.textContent === currentQuestion.answer) {
+                    button.classList.add('bg-green-500', 'text-white');
+                    button.classList.remove('bg-stone-200', 'hover:bg-stone-300');
+                } else if (button.textContent === selectedOption) {
+                    button.classList.add('bg-red-500', 'text-white');
+                    button.classList.remove('bg-stone-200', 'hover:bg-stone-300');
+                }
+                button.classList.remove('hover:scale-105');
+            });
+
+            nextButton.style.display = 'block';
+        }
+
+        function handleNextButton() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            const totalQuestions = questions.length;
+            const percentage = (score / totalQuestions) * 100;
+
+            modalTitle.textContent = "Quiz Results";
+            modalMessage.textContent = `You scored: ${score} out of ${totalQuestions}, which is ${percentage.toFixed(0)}%`;
+
+            displayReview();
+            modal.classList.remove('hidden');
+            nextButton.style.display = 'none';
+            document.getElementById('quiz-container').classList.add('hidden');
+            updateProgressBar();
+        }
+
+        function displayReview() {
+            quizReview.innerHTML = '<h3 class="text-xl font-bold mb-4">Answer Review</h3>';
+            userAnswers.forEach((answer, index) => {
+                const reviewItem = document.createElement('div');
+                reviewItem.classList.add('review-item');
+                
+                const questionTitle = document.createElement('p');
+                questionTitle.classList.add('font-semibold', 'mb-2');
+                questionTitle.textContent = `Question ${index + 1}: ${answer.question}`;
+                reviewItem.appendChild(questionTitle);
+
+                const yourAnswer = document.createElement('p');
+                yourAnswer.textContent = `Your Answer: ${answer.selected}`;
+                if (answer.isCorrect) {
+                    yourAnswer.classList.add('correct-answer');
+                } else {
+                    yourAnswer.classList.add('wrong-answer');
+                    const correctAnswer = document.createElement('p');
+                    correctAnswer.textContent = `Correct Answer: ${answer.correct}`;
+                    correctAnswer.classList.add('correct-answer');
+                    reviewItem.appendChild(correctAnswer);
+                }
+                reviewItem.appendChild(yourAnswer);
+                
+                quizReview.appendChild(reviewItem);
+            });
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.length = 0;
+            modal.classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            showQuestion();
+            nextButton.textContent = 'Next Question';
+        }
+
+        nextButton.addEventListener('click', handleNextButton);
+        modalCloseButton.addEventListener('click', restartQuiz);
+
+        showQuestion();
+    </script>
+
+</body>
+</html>
+
