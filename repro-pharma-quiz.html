@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproductive Pharmacology Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f0fdf4; /* Light green background */
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            position: relative;
+            max-width: 600px;
+            width: 100%;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            text-align: right;
+        }
+        .modal {
+            display: flex;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            max-width: 90%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-out;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .review-item {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+        .correct-answer {
+            color: #16a34a; /* Deep green for correct answer */
+        }
+        .wrong-answer {
+            color: #dc2626; /* Red for wrong answer */
+        }
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 3rem;
+            font-weight: bold;
+            color: rgba(52, 211, 153, 0.3); /* Pale green watermark */
+            pointer-events: none;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 9999px;
+            height: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #16a34a; /* Deep green progress bar */
+            transition: width 0.4s ease;
+        }
+    </style>
+</head>
+<body class="bg-green-50 p-4">
+
+    <div class="watermark">
+        دفعة إكسير الشفاء
+    </div>
+
+    <div class="container">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800 text-center">Reproductive Pharmacology Quiz</h1>
+        
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+        </div>
+
+        <div id="quiz-container">
+            <div id="quiz-question-card" class="bg-green-100 p-6 rounded-lg mb-6 shadow-sm">
+                <h2 id="quiz-question" class="text-xl font-semibold mb-4 text-gray-700"></h2>
+                <div id="quiz-options" class="space-y-3 text-left"></div>
+            </div>
+
+            <div id="quiz-feedback" class="text-lg font-medium text-center"></div>
+            <button id="quiz-next-button" class="mt-6 w-full px-6 py-3 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition duration-300 transform hover:scale-105 shadow-md">
+                Next Question
+            </button>
+        </div>
+
+        <!-- Modal for end-of-quiz message and review -->
+        <div id="quiz-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="modal-title" class="text-2xl font-bold mb-4">Quiz Results</h2>
+                <p id="modal-message" class="text-lg mb-4"></p>
+                <div id="quiz-review" class="text-left mt-6 max-h-96 overflow-y-auto"></div>
+                <button id="modal-close-button" class="mt-6 w-full px-6 py-3 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition duration-300">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "Which of the following is a synthetic, non-steroidal estrogen that is effective orally?", options: ["a) Estradiol monobenzoate", "b) Ethinylestradiol", "c) Diethylstilbestrol", "d) Progesterone"], answer: "c) Diethylstilbestrol" },
+            { question: "Which of the following is a use for estrogen preparations?", options: ["a) Treating liver disorders", "b) Postmenopausal osteoporosis", "c) Thrombo-embolic diseases", "d) Endometriosis"], answer: "b) Postmenopausal osteoporosis" },
+            { question: "A major side effect of estrogen therapy is:", options: ["a) Decreased risk of breast and endometrial cancer", "b) Peripheral edema", "c) Hypoglycemia", "d) Decreased risk of stroke"], answer: "b) Peripheral edema" },
+            { question: "Estrogen preparations are contraindicated in patients with:", options: ["a) Premature ovarian failure", "b) Atrophic vaginitis", "c) Undiagnosed genital bleeding", "d) Dysmenorrhea"], answer: "c) Undiagnosed genital bleeding" },
+            { question: "Tamoxifen has what type of action on breast tissue?", options: ["a) Estrogenic", "b) Anti-estrogenic", "c) Agonistic", "d) None of the above"], answer: "b) Anti-estrogenic" },
+            { question: "Which of the following drugs is used for the prevention and treatment of postmenopausal osteoporosis?", options: ["a) Tamoxifen", "b) Clomiphene Citrate", "c) Aminoglutethimide", "d) Raloxifene"], answer: "d) Raloxifene" },
+            { question: "Clomiphene Citrate works by:", options: ["a) Directly stimulating ovarian follicle growth", "b) Blocking progesterone receptors", "c) Increasing secretion of gonadotropin-releasing hormone", "d) Inhibiting aromatase enzymes"], answer: "c) Increasing secretion of gonadotropin-releasing hormone" },
+            { question: "Which of the following is a characteristic of natural progesterone?", options: ["a) It is highly effective orally", "b) It is used as an oral tablet", "c) It is effective after hepatic first-pass metabolism", "d) It is not effective orally due to hepatic first-pass metabolism"], answer: "d) It is not effective orally due to hepatic first-pass metabolism" },
+            { question: "A primary use for progestins is:", options: ["a) Treating liver disorders", "b) As a sole treatment for thrombo-embolic diseases", "c) Maintenance of pregnancy (threatened abortion)", "d) As an anti-androgen"], answer: "c) Maintenance of pregnancy (threatened abortion)" },
+            { question: "Mifepristone's main use is:", options: ["a) Maintenance of pregnancy", "b) To treat endometriosis", "c) Induction of abortion", "d) To treat amenorrhea"], answer: "c) Induction of abortion" },
+            { question: "Why is natural testosterone ineffective orally?", options: ["a) It has a very short half-life", "b) It causes severe GI upset", "c) It is inactivated by first-pass metabolism", "d) It is poorly absorbed from the gut"], answer: "c) It is inactivated by first-pass metabolism" },
+            { question: "Which drug is a 5α reductase inhibitor?", options: ["a) Flutamide", "b) Finasteride", "c) Cyproterone", "d) Ketoconazole"], answer: "b) Finasteride" },
+            { question: "Anabolic steroids are used to:", options: ["a) Treat male hypogonadism", "b) Decrease lean body mass in athletes", "c) Treat chronic wasting associated with AIDS or cancer", "d) Increase fertility in males"], answer: "c) Treat chronic wasting associated with AIDS or cancer" },
+            { question: "Which class of drugs for BPH works by relaxing prostatic smooth muscle but has no effect on prostate size?", options: ["a) 5-alpha reductase inhibitors", "b) Alpha antagonists", "c) Anticholinergic drugs", "d) Androgens"], answer: "b) Alpha antagonists" },
+            { question: "Which drug is preferred for a patient with BPH who also has erectile dysfunction?", options: ["a) Doxazosin", "b) Finasteride", "c) Tadalafil", "d) Tolterodine"], answer: "c) Tadalafil" },
+            { question: "What is the goal of using a 5-alpha reductase inhibitor like Finasteride in treating BPH?", options: ["a) Rapidly relieve voiding symptoms", "b) Reduce the size of the prostate", "c) Cause hypotension", "d) Relax the detrusor muscle"], answer: "b) Reduce the size of the prostate" },
+            { question: "Which drug is used primarily for the irritative symptoms of BPH, such as urinary urgency?", options: ["a) Tamsulosin", "b) Dutasteride", "c) Tolterodine", "d) Doxazosin"], answer: "c) Tolterodine" },
+            { question: "Which of the following medications should be avoided in patients with BPH because it can exacerbate obstructive symptoms?", options: ["a) Labetalol", "b) Alpha adrenergic agonists", "c) Tadalafil", "d) Finasteride"], answer: "b) Alpha adrenergic agonists" },
+            { question: "What is considered the first-line treatment for dysmenorrhea?", options: ["a) Combination Hormonal Contraceptives (CHCs)", "b) Progestin-only Contraceptives", "c) NSAIDs", "d) Insulin-Sensitizing Agents"], answer: "c) NSAIDs" },
+            { question: "In women with secondary amenorrhea, what can be used to induce withdrawal bleeding?", options: ["a) Raloxifene", "b) Dopamine Agonists", "c) Estrogen/Progestin Replacement Therapy", "d) Progestins"], answer: "d) Progestins" },
+            { question: "How do combination hormonal contraceptives work to prevent ovulation?", options: ["a) They directly destroy the egg", "b) They thicken the cervical mucus only", "c) They provide negative feedback on LH and FSH release", "d) They increase gonadotropin-releasing hormone"], answer: "c) They provide negative feedback on LH and FSH release" },
+            { question: "Which drug is an anti-fibrinolytic agent used for menorrhagia?", options: ["a) Tranexamic Acid", "b) Medroxyprogesterone Acetate Depot", "c) Clomiphene Citrate", "d) Metformin"], answer: "a) Tranexamic Acid" },
+            { question: "A highly protein-bound drug will:", options: ["a) Cross the placenta rapidly", "b) Exist in much lower concentration in the mother than the fetus", "c) Exist in much higher concentration in the mother than the fetus", "d) Be metabolized more rapidly in the fetus"], answer: "c) Exist in much higher concentration in the mother than the fetus" },
+            { question: "Which drug is used during pregnancy to stimulate fetal lung maturation in cases of expected preterm birth?", options: ["a) Phenobarbital", "b) Steroids", "c) Warfarin", "d) ACEIs"], answer: "b) Steroids" },
+            { question: "Which of the following drugs is a teratogen that can cause significant and irreversible renal damage in the fetus?", options: ["a) Carbamazepine", "b) Phenytoin", "c) Warfarin", "d) ACEIs"], answer: "d) ACEIs" },
+            { question: "What is the recommended first-line pharmacological treatment for nausea and vomiting of pregnancy?", options: ["a) Metoclopramide", "b) Pyridoxine and doxylamine combination", "c) Diphenhydramine", "d) Ondansetron"], answer: "b) Pyridoxine and doxylamine combination" },
+            { question: "Which anticoagulant is considered safe to use during lactation?", options: ["a) Warfarin", "b) heparin", "c) none of the above", "d) Both a and b"], answer: "d) Both a and b" },
+            { question: "Which of the following antihypertensive drugs is NOT allowed during pregnancy?", options: ["a) Methyldopa", "b) Labetalol", "c) Nifedipine", "d) Captopril"], answer: "d) Captopril" }
+        ];
+
+        const userAnswers = [];
+
+        const questionElement = document.getElementById('quiz-question');
+        const optionsElement = document.getElementById('quiz-options');
+        const nextButton = document.getElementById('quiz-next-button');
+        const feedbackElement = document.getElementById('quiz-feedback');
+        const modal = document.getElementById('quiz-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const quizReview = document.getElementById('quiz-review');
+        const modalCloseButton = document.getElementById('modal-close-button');
+        const progressBar = document.getElementById('progress-bar');
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function updateProgressBar() {
+            const progressPercentage = ((currentQuestionIndex) / questions.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionElement.textContent = currentQuestion.question;
+            optionsElement.innerHTML = '';
+            feedbackElement.textContent = '';
+            nextButton.style.display = 'none';
+
+            const shuffledOptions = shuffle([...currentQuestion.options]);
+
+            shuffledOptions.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.classList.add('w-full', 'py-2', 'px-4', 'bg-green-200', 'rounded-lg', 'text-gray-800', 'font-medium', 'hover:bg-green-300', 'transition', 'duration-200', 'transform', 'hover:scale-105');
+                button.addEventListener('click', () => selectOption(option));
+                optionsElement.appendChild(button);
+            });
+            updateProgressBar();
+        }
+
+        function selectOption(selectedOption) {
+            const currentQuestion = questions[currentQuestionIndex];
+            const isCorrect = selectedOption === currentQuestion.answer;
+
+            userAnswers.push({
+                question: currentQuestion.question,
+                selected: selectedOption,
+                correct: currentQuestion.answer,
+                isCorrect: isCorrect
+            });
+
+            if (isCorrect) {
+                feedbackElement.textContent = 'Correct Answer!';
+                feedbackElement.classList.remove('text-red-500');
+                feedbackElement.classList.add('text-green-600');
+                score++;
+            } else {
+                feedbackElement.textContent = `Wrong Answer. The correct answer is: ${currentQuestion.answer}`;
+                feedbackElement.classList.remove('text-green-600');
+                feedbackElement.classList.add('text-red-500');
+            }
+
+            Array.from(optionsElement.children).forEach(button => {
+                button.disabled = true;
+                if (button.textContent === currentQuestion.answer) {
+                    button.classList.add('bg-green-500', 'text-white');
+                    button.classList.remove('bg-green-200', 'hover:bg-green-300');
+                } else if (button.textContent === selectedOption) {
+                    button.classList.add('bg-red-500', 'text-white');
+                    button.classList.remove('bg-green-200', 'hover:bg-green-300');
+                }
+                button.classList.remove('hover:scale-105');
+            });
+
+            nextButton.style.display = 'block';
+        }
+
+        function handleNextButton() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            const totalQuestions = questions.length;
+            const percentage = (score / totalQuestions) * 100;
+
+            modalTitle.textContent = "Quiz Results";
+            modalMessage.textContent = `Your score: ${score} / ${totalQuestions}, ${percentage.toFixed(0)}%`;
+
+            displayReview();
+            modal.classList.remove('hidden');
+            nextButton.style.display = 'none';
+            document.getElementById('quiz-container').classList.add('hidden');
+            updateProgressBar();
+        }
+
+        function displayReview() {
+            quizReview.innerHTML = '<h3 class="text-xl font-bold mb-4">Answer Review</h3>';
+            userAnswers.forEach((answer, index) => {
+                const reviewItem = document.createElement('div');
+                reviewItem.classList.add('review-item');
+                
+                const questionTitle = document.createElement('p');
+                questionTitle.classList.add('font-semibold', 'mb-2');
+                questionTitle.textContent = `Question ${index + 1}: ${answer.question}`;
+                reviewItem.appendChild(questionTitle);
+
+                const yourAnswer = document.createElement('p');
+                yourAnswer.textContent = `Your Answer: ${answer.selected}`;
+                if (answer.isCorrect) {
+                    yourAnswer.classList.add('correct-answer');
+                } else {
+                    yourAnswer.classList.add('wrong-answer');
+                    const correctAnswer = document.createElement('p');
+                    correctAnswer.textContent = `Correct Answer: ${answer.correct}`;
+                    correctAnswer.classList.add('correct-answer');
+                    reviewItem.appendChild(correctAnswer);
+                }
+                reviewItem.appendChild(yourAnswer);
+                
+                quizReview.appendChild(reviewItem);
+            });
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.length = 0;
+            modal.classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            showQuestion();
+            nextButton.textContent = 'Next Question';
+        }
+
+        nextButton.addEventListener('click', handleNextButton);
+        modalCloseButton.addEventListener('click', restartQuiz);
+
+        showQuestion();
+    </script>
+
+</body>
+</html>
+

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproductive Bacterial Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #fffaf0; /* Light orange background */
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            position: relative;
+            max-width: 600px;
+            width: 100%;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            text-align: right;
+        }
+        .modal {
+            display: flex;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            max-width: 90%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-out;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .review-item {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+        .correct-answer {
+            color: #d97706; /* Deep orange for correct answer */
+        }
+        .wrong-answer {
+            color: #dc2626; /* Red for wrong answer */
+        }
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 3rem;
+            font-weight: bold;
+            color: rgba(251, 191, 36, 0.3); /* Pale orange watermark */
+            pointer-events: none;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 9999px;
+            height: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #d97706; /* Deep orange progress bar */
+            transition: width 0.4s ease;
+        }
+    </style>
+</head>
+<body class="bg-orange-50 p-4">
+
+    <div class="watermark">
+        دفعة إكسير الشفاء
+    </div>
+
+    <div class="container">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800 text-center">Reproductive Bacterial Quiz</h1>
+        
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+        </div>
+
+        <div id="quiz-container">
+            <div id="quiz-question-card" class="bg-orange-100 p-6 rounded-lg mb-6 shadow-sm">
+                <h2 id="quiz-question" class="text-xl font-semibold mb-4 text-gray-700"></h2>
+                <div id="quiz-options" class="space-y-3 text-left"></div>
+            </div>
+
+            <div id="quiz-feedback" class="text-lg font-medium text-center"></div>
+            <button id="quiz-next-button" class="mt-6 w-full px-6 py-3 bg-orange-600 text-white rounded-lg font-bold hover:bg-orange-700 transition duration-300 transform hover:scale-105 shadow-md">
+                Next Question
+            </button>
+        </div>
+
+        <!-- Modal for end-of-quiz message and review -->
+        <div id="quiz-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="modal-title" class="text-2xl font-bold mb-4">Quiz Results</h2>
+                <p id="modal-message" class="text-lg mb-4"></p>
+                <div id="quiz-review" class="text-left mt-6 max-h-96 overflow-y-auto"></div>
+                <button id="modal-close-button" class="mt-6 w-full px-6 py-3 bg-orange-600 text-white rounded-lg font-bold hover:bg-orange-700 transition duration-300">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "What is the appearance of Neisseria gonorrhoeae under a microscope?", options: ["A. Gram-positive diplococci", "B. Gram-negative rods", "C. Gram-negative diplococci flattened along the adjoining side", "D. Gram-positive cocci in clusters"], answer: "C. Gram-negative diplococci flattened along the adjoining side" },
+            { question: "How is the gonococcus transmitted?", options: ["A. Through tears", "B. By coughing", "C. Through sexual contact", "D. By touching contaminated surfaces"], answer: "C. Through sexual contact" },
+            { question: "Which part of the body does gonorrhea primarily attack?", options: ["A. The respiratory tract", "B. The genitourinary tract, eye, and anorectal area", "C. The central nervous system", "D. The circulatory system"], answer: "B. The genitourinary tract, eye, and anorectal area" },
+            { question: "What is the characteristic clinical symptom of Ophthalmia neonatorum?", options: ["A. Purulent discharge and dysuria", "B. Infection of the newborn's eyes from a gonorrheal mother", "C. Fibrosis of the uterine tubes", "D. Condylomata on the genital area"], answer: "B. Infection of the newborn's eyes from a gonorrheal mother" },
+            { question: "What is the drug of choice for treating Gonorrhea?", options: ["A. Penicillin", "B. Tetracycline and erythromycin", "C. Ceftriaxone and ciprofloxacin", "D. Acyclovir"], answer: "C. Ceftriaxone and ciprofloxacin" },
+            { question: "What type of bacteria is Treponema pallidum?", options: ["A. A Gram-positive coccus", "B. A spirochete", "C. An intracellular bacterium", "D. A Gram-negative rod"], answer: "B. A spirochete" },
+            { question: "What is a characteristic symptom of primary syphilis?", options: ["A. A generalized papular rash", "B. A local painless, non-tender ulcer called a primary chancre", "C. Warts on the genital area called condylomata", "D. A destructive inflammatory disease affecting any organ"], answer: "B. A local painless, non-tender ulcer called a primary chancre" },
+            { question: "What is the drug of choice for treating Syphilis?", options: ["A. Ceftriaxone", "B. Penicillin", "C. Tetracycline", "D. Ciprofloxacin"], answer: "B. Penicillin" },
+            { question: "Which of the following is a symptom of secondary syphilis?", options: ["A. Warts on the genital area called condylomata lata", "B. A single chancre", "C. A destructive inflammatory disease", "D. Gummas"], answer: "A. Warts on the genital area called condylomata lata" },
+            { question: "What is the cause of Lymphogranuloma venereum?", options: ["A. Neisseria gonorrhoeae", "B. Treponema pallidum", "C. Chlamydia trachomatis", "D. H. ducrii"], answer: "C. Chlamydia trachomatis" },
+            { question: "Which of the following describes Chlamydiae?", options: ["A. They are able to synthesize their own ATP.", "B. They are obligate intracellular bacteria.", "C. They are classified as viruses.", "D. They do not have a cell wall."], answer: "B. They are obligate intracellular bacteria." },
+            { question: "What is the infectious form of Chlamydia that is taken up by the host cell?", options: ["A. Reticulate body (RB)", "B. Elementary body (EB)", "C. Intracellular inclusion body", "D. Chlamydial spore"], answer: "B. Elementary body (EB)" },
+            { question: "How is Chlamydia trachomatis transmitted?", options: ["A. By airborne droplets", "B. By close personal contact, such as sexual contact", "C. By contaminated food", "D. By insect bites"], answer: "B. By close personal contact, such as sexual contact" },
+            { question: "What is the main reason Chlamydiae are classified as bacteria and not viruses?", options: ["A. They are affected by antibiotics.", "B. They are obligate intracellular.", "C. They are more common than viruses.", "D. They have an envelope."], answer: "A. They are affected by antibiotics." },
+            { question: "Which of the following is a disease caused by Chlamydia trachomatis?", options: ["A. Lymphogranuloma venereum", "B. Syphilis", "C. Gonorrhea", "D. Chancroid"], answer: "A. Lymphogranuloma venereum" },
+            { question: "What is describing a primary chancre?", options: ["A. A gumma", "B. A bubo", "C. A non-tender ulcer", "D. A condylomata lata"], answer: "C. A non-tender ulcer" },
+            { question: "Which stage of syphilis is characterized by the presence of gummas?", options: ["A. Primary syphilis", "B. Secondary syphilis", "C. Tertiary syphilis", "D. Latent syphilis"], answer: "C. Tertiary syphilis" },
+            { question: "What is the microscopic appearance of N. gonorrhoeae when stained?", options: ["A. Gram-positive, forming clusters", "B. Gram-negative, forming chains", "C. Gram-negative, in pairs", "D. Gram-positive, in pairs"], answer: "C. Gram-negative, in pairs" },
+            { question: "What is the function of the outer membrane protein II of N. gonorrhoeae?", options: ["A. Endotoxin activity", "B. Attachment to the host cell", "C. Nutrient absorption", "D. Exotoxins production"], answer: "B. Attachment to the host cell" },
+            { question: "What is the name for the regional lymph node involvement in Lymphogranuloma venereum?", options: ["A. Chancre", "B. Buboe", "C. Gumma", "D. Condylomata"], answer: "B. Buboe" },
+            { question: "What is the main characteristic of the \"Reticulate body\" (RB) stage of Chlamydia?", options: ["A. It is the infectious form.", "B. It is seen as intracytoplasmic inclusion bodies in the host cell.", "C. It is smaller than EB form.", "D. It is found outside the host cell."], answer: "B. It is seen as intracytoplasmic inclusion bodies in the host cell." },
+            { question: "Which of these non-venereal diseases results in genital infections?", options: ["A. Gonorrhea", "B. Syphilis", "C. AIDS", "D. None of the above, as all are listed as venereal diseases."], answer: "D. None of the above, as all are listed as venereal diseases." },
+            { question: "How is congenital syphilis transmitted?", options: ["A. Through sexual contact", "B. Through blood transfusion", "C. From an infected pregnant woman to her fetus", "D. Through contaminated food"], answer: "C. From an infected pregnant woman to her fetus" },
+            { question: "What is the significance of the \"Lipooligosaccharide\" in N. gonorrhoeae?", options: ["A. It is an important attachment factor.", "B. It helps in the movement of the bacteria.", "C. It is responsible for the production of endotoxins.", "D. It helps in the formation of biofilms."], answer: "C. It is responsible for the production of endotoxins." },
+            { question: "What is the role of IgA1 protease in N. gonorrhoeae?", options: ["A. It breaks down IgA antibodies, allowing the bacteria to evade the immune system.", "B. It helps in the attachment to host cells.", "C. It produces endotoxins.", "D. It helps the bacteria to move."], answer: "A. It breaks down IgA antibodies, allowing the bacteria to evade the immune system." },
+            { question: "What is the correct treatment for a pregnant woman with syphilis to prevent congenital syphilis in the fetus?", options: ["A. Tetracycline", "B. Ceftriaxone", "C. Acyclovir", "D. Penicillin"], answer: "D. Penicillin" }
+        ];
+
+        const userAnswers = [];
+
+        const questionElement = document.getElementById('quiz-question');
+        const optionsElement = document.getElementById('quiz-options');
+        const nextButton = document.getElementById('quiz-next-button');
+        const feedbackElement = document.getElementById('quiz-feedback');
+        const modal = document.getElementById('quiz-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const quizReview = document.getElementById('quiz-review');
+        const modalCloseButton = document.getElementById('modal-close-button');
+        const progressBar = document.getElementById('progress-bar');
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function updateProgressBar() {
+            const progressPercentage = ((currentQuestionIndex) / questions.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionElement.textContent = currentQuestion.question;
+            optionsElement.innerHTML = '';
+            feedbackElement.textContent = '';
+            nextButton.style.display = 'none';
+
+            const shuffledOptions = shuffle([...currentQuestion.options]);
+
+            shuffledOptions.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.classList.add('w-full', 'py-2', 'px-4', 'bg-orange-200', 'rounded-lg', 'text-gray-800', 'font-medium', 'hover:bg-orange-300', 'transition', 'duration-200', 'transform', 'hover:scale-105');
+                button.addEventListener('click', () => selectOption(option));
+                optionsElement.appendChild(button);
+            });
+            updateProgressBar();
+        }
+
+        function selectOption(selectedOption) {
+            const currentQuestion = questions[currentQuestionIndex];
+            const isCorrect = selectedOption === currentQuestion.answer;
+
+            userAnswers.push({
+                question: currentQuestion.question,
+                selected: selectedOption,
+                correct: currentQuestion.answer,
+                isCorrect: isCorrect
+            });
+
+            if (isCorrect) {
+                feedbackElement.textContent = 'Correct Answer!';
+                feedbackElement.classList.remove('text-red-500');
+                feedbackElement.classList.add('text-green-600');
+                score++;
+            } else {
+                feedbackElement.textContent = `Wrong Answer. The correct answer is: ${currentQuestion.answer}`;
+                feedbackElement.classList.remove('text-green-600');
+                feedbackElement.classList.add('text-red-500');
+            }
+
+            Array.from(optionsElement.children).forEach(button => {
+                button.disabled = true;
+                if (button.textContent === currentQuestion.answer) {
+                    button.classList.add('bg-green-500', 'text-white');
+                    button.classList.remove('bg-orange-200', 'hover:bg-orange-300');
+                } else if (button.textContent === selectedOption) {
+                    button.classList.add('bg-red-500', 'text-white');
+                    button.classList.remove('bg-orange-200', 'hover:bg-orange-300');
+                }
+                button.classList.remove('hover:scale-105');
+            });
+
+            nextButton.style.display = 'block';
+        }
+
+        function handleNextButton() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            const totalQuestions = questions.length;
+            const percentage = (score / totalQuestions) * 100;
+
+            modalTitle.textContent = "Quiz Results";
+            modalMessage.textContent = `Your score: ${score} / ${totalQuestions}, ${percentage.toFixed(0)}%`;
+
+            displayReview();
+            modal.classList.remove('hidden');
+            nextButton.style.display = 'none';
+            document.getElementById('quiz-container').classList.add('hidden');
+            updateProgressBar();
+        }
+
+        function displayReview() {
+            quizReview.innerHTML = '<h3 class="text-xl font-bold mb-4">Answer Review</h3>';
+            userAnswers.forEach((answer, index) => {
+                const reviewItem = document.createElement('div');
+                reviewItem.classList.add('review-item');
+                
+                const questionTitle = document.createElement('p');
+                questionTitle.classList.add('font-semibold', 'mb-2');
+                questionTitle.textContent = `Question ${index + 1}: ${answer.question}`;
+                reviewItem.appendChild(questionTitle);
+
+                const yourAnswer = document.createElement('p');
+                yourAnswer.textContent = `Your Answer: ${answer.selected}`;
+                if (answer.isCorrect) {
+                    yourAnswer.classList.add('correct-answer');
+                } else {
+                    yourAnswer.classList.add('wrong-answer');
+                    const correctAnswer = document.createElement('p');
+                    correctAnswer.textContent = `Correct Answer: ${answer.correct}`;
+                    correctAnswer.classList.add('correct-answer');
+                    reviewItem.appendChild(correctAnswer);
+                }
+                reviewItem.appendChild(yourAnswer);
+                
+                quizReview.appendChild(reviewItem);
+            });
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.length = 0;
+            modal.classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            showQuestion();
+            nextButton.textContent = 'Next Question';
+        }
+
+        nextButton.addEventListener('click', handleNextButton);
+        modalCloseButton.addEventListener('click', restartQuiz);
+
+        showQuestion();
+    </script>
+
+</body>
+</html>
+

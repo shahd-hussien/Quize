@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Female Pathology Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #fce4ec; /* Light magenta background */
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            position: relative;
+            max-width: 600px;
+            width: 100%;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            text-align: right;
+        }
+        .modal {
+            display: flex;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            max-width: 90%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-out;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .review-item {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+        .correct-answer {
+            color: #d81b60; /* Deep magenta for correct answer */
+        }
+        .wrong-answer {
+            color: #dc2626; /* Red for wrong answer */
+        }
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 3rem;
+            font-weight: bold;
+            color: rgba(236, 64, 122, 0.3); /* Pale magenta watermark */
+            pointer-events: none;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 9999px;
+            height: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #d81b60; /* Deep magenta progress bar */
+            transition: width 0.4s ease;
+        }
+    </style>
+</head>
+<body class="bg-pink-50 p-4">
+
+    <div class="watermark">
+        دفعة إكسير الشفاء
+    </div>
+
+    <div class="container">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800 text-center">Female Pathology Quiz</h1>
+        
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+        </div>
+
+        <div id="quiz-container">
+            <div id="quiz-question-card" class="bg-pink-100 p-6 rounded-lg mb-6 shadow-sm">
+                <h2 id="quiz-question" class="text-xl font-semibold mb-4 text-gray-700"></h2>
+                <div id="quiz-options" class="space-y-3 text-left"></div>
+            </div>
+
+            <div id="quiz-feedback" class="text-lg font-medium text-center"></div>
+            <button id="quiz-next-button" class="mt-6 w-full px-6 py-3 bg-pink-600 text-white rounded-lg font-bold hover:bg-pink-700 transition duration-300 transform hover:scale-105 shadow-md">
+                Next Question
+            </button>
+        </div>
+
+        <!-- Modal for end-of-quiz message and review -->
+        <div id="quiz-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="modal-title" class="text-2xl font-bold mb-4">Quiz Results</h2>
+                <p id="modal-message" class="text-lg mb-4"></p>
+                <div id="quiz-review" class="text-left mt-6 max-h-96 overflow-y-auto"></div>
+                <button id="modal-close-button" class="mt-6 w-full px-6 py-3 bg-pink-600 text-white rounded-lg font-bold hover:bg-pink-700 transition duration-300">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "What is the most common viral infection involving the cervix, vagina, and vulva?", options: ["A. HPV low risk type", "B. HSV-2", "C. Gonococci infection", "D. HPV high risk type"], answer: "B. HSV-2" },
+            { question: "What is a predisposing factor for symptomatic Candida infection?", options: ["A. Early marriage", "B. Diabetes", "C. Multiparity", "D. Nullipara"], answer: "B. Diabetes" },
+            { question: "What is the clinical presentation of Pelvic inflammatory disease (PID)?", options: ["A. Vulvovaginal pruritis and erythema", "B. Painful coalescent ulcers", "C. Pelvic pain, adnexal tenderness, and fever", "D. Asymptomatic infection"], answer: "C. Pelvic pain, adnexal tenderness, and fever" },
+            { question: "Which of the following is a key feature of puerperal sepsis?", options: ["A. It is a sexually transmitted disease.", "B. It starts in Bartholin glands.", "C. It is caused by Gonococci.", "D. It starts in the uterus and spreads to deeper layers."], answer: "D. It starts in the uterus and spreads to deeper layers." },
+            { question: "What is the term for a benign squamous tumor caused by low-risk HPV types 6 and 11?", options: ["A. Squamous cell carcinoma", "B. Vulval intra-epithelial neoplasia", "C. Condyloma accuminatum", "D. Bowen disease"], answer: "C. Condyloma accuminatum" },
+            { question: "What is the most common tumor of the adult female?", options: ["A. Endometrial polyp", "B. Squamous cell carcinoma of the cervix", "C. Leiomyoma", "D. Ovarian cyst"], answer: "C. Leiomyoma" },
+            { question: "What is the definition of Adenomyosis?", options: ["A. Presence of endometrial glands and stroma outside the uterus", "B. Presence of nests of endometrium deep in the myometrium", "C. A form of endometrial hyperplasia", "D. A benign tumor of the endometrium"], answer: "B. Presence of nests of endometrium deep in the myometrium" },
+            { question: "Which of the following is a complication of Endometriosis?", options: ["A. Dysmenorrhea", "B. Pelvic pain", "C. Infertility", "D. All of the above"], answer: "D. All of the above" },
+            { question: "Which type of uterine sarcoma affects children and presents grossly as a \"bunch of grapes\"?", options: ["A. Leiomyosarcoma", "B. Endometrial stromal sarcoma", "C. Sarcoma botryoides", "D. Malignant mixed mullerian tumor"], answer: "C. Sarcoma botryoides" },
+            { question: "What is the key predisposing factor for cervical carcinoma?", options: ["A. High-risk HPV", "B. Chronic cervicitis (chlamydia)", "C. Multiple pregnancies", "D. All of the above"], answer: "D. All of the above" },
+            { question: "Which stage of cervical carcinoma is defined as \"confined to the cervix\"?", options: ["A. Stage 0", "B. Stage 1", "C. Stage 2", "D. Stage 3"], answer: "B. Stage 1" },
+            { question: "What is the definition of Menorrhagia?", options: ["A. Abnormal bleeding between periods", "B. Prolonged bleeding at the time of menstruation", "C. No bleeding at all", "D. Painful menstruation"], answer: "B. Prolonged bleeding at the time of menstruation" },
+            { question: "Which of the following is a benign tumor of the female genital tract?", options: ["A. Squamous cell carcinoma", "B. Sarcoma botryoides", "C. Leiomyoma", "D. Carcinosarcoma"], answer: "C. Leiomyoma" },
+            { question: "What is a \"chocolate cyst\" in the ovary?", options: ["A. A follicular cyst", "B. An endometrioma", "C. A dermoid cyst", "D. A mucinous cystadenoma"], answer: "B. An endometrioma" },
+            { question: "What is the primary cause of Condyloma accuminatum?", options: ["A. High-risk HPV (16,18)", "B. HSV-2", "C. Low-risk HPV (6,11)", "D. Candida"], answer: "C. Low-risk HPV (6,11)" },
+            { question: "What is the transformation zone in the cervix?", options: ["A. The area where only columnar epithelium is present", "B. The area where squamous metaplasia occurs between the two SCJs", "C. The area where retention cysts are found", "D. The area where laceration of the cervix occurs"], answer: "B. The area where squamous metaplasia occurs between the two SCJs" },
+            { question: "What is the microscopic appearance of a Leiomyoma?", options: ["A. Interlacing bundles of smooth muscle fibers and fibrous tissue", "B. A mix of adenocarcinoma and sarcomatous differentiation", "C. A bunch of grapes appearance", "D. Undifferentiated cells in a myxoid background"], answer: "A. Interlacing bundles of smooth muscle fibers and fibrous tissue" },
+            { question: "Which of the following is considered a precancerous lesion for cervical carcinoma?", options: ["A. Squamous cell papilloma", "B. Condyloma accuminatum", "C. Cervical intraepithelial neoplasia (CIN)", "D. Cervical polyp"], answer: "C. Cervical intraepithelial neoplasia (CIN)" },
+            { question: "What is a key difference between Gonorrhea and Puerperal sepsis?", options: ["A. Gonorrhea is sexually transmitted, while Puerperal sepsis is caused by a surgical procedure.", "B. Gonorrhea spreads via deep tissues, while Puerperal sepsis spreads superficially.", "C. Gonorrhea is caused by Streptococci, while Puerperal sepsis is caused by Gonococci.", "D. Gonorrhea affects the uterus only, while Puerperal sepsis affects the tubes."], answer: "A. Gonorrhea is sexually transmitted, while Puerperal sepsis is caused by a surgical procedure." },
+            { question: "What is the key microscopic feature of Adenomatous hyperplasia?", options: ["A. Increased N/C ratio,", "B. Glands show architecture and cytological atypia", "C. Increased gland number with crowding, enlargement, and abnormal shapes", "D. The lining cells are similar to late proliferative glands"], answer: "C. Increased gland number with crowding, enlargement, and abnormal shapes" },
+            { question: "What is the primary cause of Endometrial hyperplasia?", options: ["A. Insufficient progesterone", "B. Excessive estrogenic stimulation", "C. Lack of menstruation", "D. Intrauterine contraceptive device"], answer: "B. Excessive estrogenic stimulation" },
+            { question: "Which type of endometrial hyperplasia is most likely to progress to carcinoma?", options: ["A. Endometrial intra-epithelial hyperplasia", "B. Adenomatous hyperplasia", "C. Atypical hyperplasia", "D. Both A, and C"], answer: "D. Both A, and C" },
+            { question: "What is the False statement about Hydatidiform mole?", options: ["A. Swollen, oedematous chorionic villi microscopically", "B. A destructive inflammatory disease", "C. Tumor-like condition", "D. Grape like structure grossly"], answer: "B. A destructive inflammatory disease" },
+            { question: "What is a \"Brenner tumor\"?", options: ["A. A benign transitional epithelial tumor", "B. A malignant serous tumor", "C. A form of germ cell tumor", "D. A type of stromal tumor"], answer: "A. A benign transitional epithelial tumor" },
+            { question: "What is the classic presentation of Leiomyoma on a gross picture?", options: ["A. Diffuse infiltrating mass", "B. Well-defined, solitary or multiple masses with a whorly appearance", "C. A polypoid, infiltrating or ulcerating mass", "D. A bunch of grapes appearance"], answer: "B. Well-defined, solitary or multiple masses with a whorly appearance" },
+            { question: "What is a key difference between Paget disease of the breast and Extramammary Paget disease?", options: ["A. The breast lesion is always benign, while the vulvar lesion is always malignant.", "B. The breast lesion is associated with an underlying invasive mass, while the vulvar lesion is not.", "C. The breast lesion is red and pruritic, while the vulvar lesion is not.", "D. The breast lesion shows clear cells, while the vulvar lesion shows spindle cells."], answer: "B. The breast lesion is associated with an underlying invasive mass, while the vulvar lesion is not." },
+            { question: "Which of the following describes the microscopic picture of an Endometrioid carcinoma?", options: ["A. Malignant glands with varying grades of differentiation", "B. Cores of connective tissue with covering malignant serous epithelium", "C. A mixture of adenocarcinoma and sarcomatous differentiation", "D. A bunch of grapes appearance"], answer: "A. Malignant glands with varying grades of differentiation" },
+            { question: "Which type of ovarian tumor is a composite tumor formed of tissue derived from the three germ layers?", options: ["A. Dysgerminoma", "B. Serous cystadenoma", "C. Teratoma", "D. Granulosa-theca cell tumor"], answer: "C. Teratoma" }
+        ];
+
+        const userAnswers = [];
+
+        const questionElement = document.getElementById('quiz-question');
+        const optionsElement = document.getElementById('quiz-options');
+        const nextButton = document.getElementById('quiz-next-button');
+        const feedbackElement = document.getElementById('quiz-feedback');
+        const modal = document.getElementById('quiz-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const quizReview = document.getElementById('quiz-review');
+        const modalCloseButton = document.getElementById('modal-close-button');
+        const progressBar = document.getElementById('progress-bar');
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function updateProgressBar() {
+            const progressPercentage = ((currentQuestionIndex) / questions.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionElement.textContent = currentQuestion.question;
+            optionsElement.innerHTML = '';
+            feedbackElement.textContent = '';
+            nextButton.style.display = 'none';
+
+            const shuffledOptions = shuffle([...currentQuestion.options]);
+
+            shuffledOptions.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.classList.add('w-full', 'py-2', 'px-4', 'bg-pink-200', 'rounded-lg', 'text-gray-800', 'font-medium', 'hover:bg-pink-300', 'transition', 'duration-200', 'transform', 'hover:scale-105');
+                button.addEventListener('click', () => selectOption(option));
+                optionsElement.appendChild(button);
+            });
+            updateProgressBar();
+        }
+
+        function selectOption(selectedOption) {
+            const currentQuestion = questions[currentQuestionIndex];
+            const isCorrect = selectedOption === currentQuestion.answer;
+
+            userAnswers.push({
+                question: currentQuestion.question,
+                selected: selectedOption,
+                correct: currentQuestion.answer,
+                isCorrect: isCorrect
+            });
+
+            if (isCorrect) {
+                feedbackElement.textContent = 'Correct Answer!';
+                feedbackElement.classList.remove('text-red-500');
+                feedbackElement.classList.add('text-green-600');
+                score++;
+            } else {
+                feedbackElement.textContent = `Wrong Answer. The correct answer is: ${currentQuestion.answer}`;
+                feedbackElement.classList.remove('text-green-600');
+                feedbackElement.classList.add('text-red-500');
+            }
+
+            Array.from(optionsElement.children).forEach(button => {
+                button.disabled = true;
+                if (button.textContent === currentQuestion.answer) {
+                    button.classList.add('bg-green-500', 'text-white');
+                    button.classList.remove('bg-pink-200', 'hover:bg-pink-300');
+                } else if (button.textContent === selectedOption) {
+                    button.classList.add('bg-red-500', 'text-white');
+                    button.classList.remove('bg-pink-200', 'hover:bg-pink-300');
+                }
+                button.classList.remove('hover:scale-105');
+            });
+
+            nextButton.style.display = 'block';
+        }
+
+        function handleNextButton() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            const totalQuestions = questions.length;
+            const percentage = (score / totalQuestions) * 100;
+
+            modalTitle.textContent = "Quiz Results";
+            modalMessage.textContent = `Your score: ${score} / ${totalQuestions}, ${percentage.toFixed(0)}%`;
+
+            displayReview();
+            modal.classList.remove('hidden');
+            nextButton.style.display = 'none';
+            document.getElementById('quiz-container').classList.add('hidden');
+            updateProgressBar();
+        }
+
+        function displayReview() {
+            quizReview.innerHTML = '<h3 class="text-xl font-bold mb-4">Answer Review</h3>';
+            userAnswers.forEach((answer, index) => {
+                const reviewItem = document.createElement('div');
+                reviewItem.classList.add('review-item');
+                
+                const questionTitle = document.createElement('p');
+                questionTitle.classList.add('font-semibold', 'mb-2');
+                questionTitle.textContent = `Question ${index + 1}: ${answer.question}`;
+                reviewItem.appendChild(questionTitle);
+
+                const yourAnswer = document.createElement('p');
+                yourAnswer.textContent = `Your Answer: ${answer.selected}`;
+                if (answer.isCorrect) {
+                    yourAnswer.classList.add('correct-answer');
+                } else {
+                    yourAnswer.classList.add('wrong-answer');
+                    const correctAnswer = document.createElement('p');
+                    correctAnswer.textContent = `Correct Answer: ${answer.correct}`;
+                    correctAnswer.classList.add('correct-answer');
+                    reviewItem.appendChild(correctAnswer);
+                }
+                reviewItem.appendChild(yourAnswer);
+                
+                quizReview.appendChild(reviewItem);
+            });
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.length = 0;
+            modal.classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            showQuestion();
+            nextButton.textContent = 'Next Question';
+        }
+
+        nextButton.addEventListener('click', handleNextButton);
+        modalCloseButton.addEventListener('click', restartQuiz);
+
+        showQuestion();
+    </script>
+
+</body>
+</html>
+

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproductive Viral Pathology Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f3e8ff; /* Light purple background */
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            position: relative;
+            max-width: 600px;
+            width: 100%;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            text-align: right;
+        }
+        .modal {
+            display: flex;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            max-width: 90%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-out;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .review-item {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+        .correct-answer {
+            color: #4c1d95; /* Deep purple for correct answer */
+        }
+        .wrong-answer {
+            color: #be123c; /* Red for wrong answer */
+        }
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 3rem;
+            font-weight: bold;
+            color: rgba(221, 160, 221, 0.3); /* Pale purple watermark */
+            pointer-events: none;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 9999px;
+            height: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #4c1d95; /* Deep purple progress bar */
+            transition: width 0.4s ease;
+        }
+    </style>
+</head>
+<body class="bg-purple-50 p-4">
+
+    <div class="watermark">
+        دفعة إكسير الشفاء
+    </div>
+
+    <div class="container">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800 text-center">Reproductive Viral Pathology Quiz</h1>
+        
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+        </div>
+
+        <div id="quiz-container">
+            <div id="quiz-question-card" class="bg-purple-100 p-6 rounded-lg mb-6 shadow-sm">
+                <h2 id="quiz-question" class="text-xl font-semibold mb-4 text-gray-700"></h2>
+                <div id="quiz-options" class="space-y-3 text-left"></div>
+            </div>
+
+            <div id="quiz-feedback" class="text-lg font-medium text-center"></div>
+            <button id="quiz-next-button" class="mt-6 w-full px-6 py-3 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700 transition duration-300 transform hover:scale-105 shadow-md">
+                Next Question
+            </button>
+        </div>
+
+        <!-- Modal for end-of-quiz message and review -->
+        <div id="quiz-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="modal-title" class="text-2xl font-bold mb-4">Quiz Results</h2>
+                <p id="modal-message" class="text-lg mb-4"></p>
+                <div id="quiz-review" class="text-left mt-6 max-h-96 overflow-y-auto"></div>
+                <button id="modal-close-button" class="mt-6 w-full px-6 py-3 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700 transition duration-300">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "Which protein is the most important core protein of HIV and is used as a serological marker for virus replication early after infection?", options: ["A. gp120", "B. p17", "C. gp41", "D. p24"], answer: "D. p24" },
+            { question: "What is the name of the viral enzyme responsible for transcribing HIV's RNA genome into DNA?", options: ["A. Integrase", "B. Protease", "C. Reverse transcriptase", "D. Ligase"], answer: "C. Reverse transcriptase" },
+            { question: "Which of the following is NOT a mode of HIV transmission?", options: ["A. Sexual contact", "B. Tears", "C. Parenteral transmission", "D. Breast milk"], answer: "B. Tears" },
+            { question: "During which stage of HIV infection is the patient typically asymptomatic, while a large amount of HIV is produced and trapped in lymph nodes?", options: ["A. Acute stage", "B. Latent stage", "C. AIDS-related complex (ARC)", "D. Late stage (AIDS)"], answer: "B. Latent stage" },
+            { question: "What are the two most characterized opportunistic infections associated with the late stage of AIDS?", options: ["A. Cytomegalovirus and Tuberculosis", "B. Candidiasis and Toxoplasmosis", "C. Kaposi sarcoma and Pneumocystis jiroveci pneumonia", "D. Herpes simplex and Cryptococcosis"], answer: "C. Kaposi sarcoma and Pneumocystis jiroveci pneumonia" },
+            { question: "What is the genome of a Herpesvirus?", options: ["A. dsDNA, linear", "B. ssRNA", "C. dsDNA, circular", "D. dsRNA"], answer: "A. dsDNA, linear" },
+            { question: "In which sensory ganglia does HSV-1 typically reside in a latent form?", options: ["A. Sacral ganglia", "B. Trigeminal ganglia", "C. Lumbar ganglia", "D. Spinal ganglia"], answer: "B. Trigeminal ganglia" },
+            { question: "What is the common disease caused by HSV type 2?", options: ["A. Herpes labialis", "B. Encephalitis", "C. Gingivostomatitis", "D. Genital herpes"], answer: "D. Genital herpes" },
+            { question: "What is the characteristic structure of a Human Papilloma Virus (HPV)?", options: ["A. Enveloped with glycoprotein spikes", "B. Non-enveloped with a circular dsDNA genome", "C. Spherical with an ssRNA genome", "D. Linear ssDNA genome"], answer: "B. Non-enveloped with a circular dsDNA genome" },
+            { question: "What is the name for the irregular, soft, pink growths on the external genitalia or anus caused by HPV?", options: ["A. Maculopapular rash", "B. Condylomata (genital warts)", "C. Roseola infantum", "D. Eczema herpeticum"], answer: "B. Condylomata (genital warts)" },
+            { question: "Which of the following is NOT a characteristic of a live attenuated rubella vaccine?", options: ["A. It is given to pre-pubertal girls and older women of childbearing age.", "B. It is given as part of the MMR vaccine.", "C. It is typically given at 18 months of age.", "D. Mumps, Mycoplasma, Rubella combined vaccines."], answer: "D. Mumps, Mycoplasma, Rubella combined vaccines." },
+            { question: "What is the common childhood disease caused by the Human B19 virus, also known as \"slapped cheek disease\"?", options: ["A. Roseola infantum", "B. German measles", "C. Erythema infectiosum (fifth disease)", "D. Mumps"], answer: "C. Erythema infectiosum (fifth disease)" },
+            { question: "The TORCH acronym describes causative organisms for congenital defects. What does the \"O\" stand for?", options: ["A. Other", "B. Orchitis", "C. Organ transplant", "D. Ocular defects"], answer: "A. Other" },
+            { question: "How is the Cytomegalovirus (CMV) recognized in histological preparations?", options: ["A. By the presence of specific granulomas", "B. By the demonstration of large intranuclear inclusions that give an \"owl's eye\" appearance", "C. By extensive areas of hemorrhage and necrosis", "D. By uniform polygonal cells"], answer: "B. By the demonstration of large intranuclear inclusions that give an \"owl's eye\" appearance" },
+            { question: "Which of the following is a complication of Human B19 virus infection during pregnancy?", options: ["A. Gingivostomatitis", "B. Transient aplastic crisis", "C. Hydrops fetalis and fetal death", "D. Chronic diarrhea"], answer: "C. Hydrops fetalis and fetal death" },
+            { question: "What is the name of the antiretroviral therapy for HIV that uses a combination of drugs?", options: ["A. ELISA", "B. Acyclovir", "C. HAART (highly active antiretroviral therapy)", "D. Ganciclovir"], answer: "C. HAART (highly active antiretroviral therapy)" },
+            { question: "Which of the following viruses is a member of the Togavirus family, with an ssRNA, cubic symmetry, and an envelope?", options: ["A. Rubella", "B. HIV", "C. Cytomegalovirus", "D. Herpes simplex"], answer: "A. Rubella" },
+            { question: "What is the pathogenesis of AIDS?", options: ["A. HIV attacks and depletes CD4 T helper cells.", "B. HIV causes the body to produce too many CD4 cells.", "C. HIV attacks red blood cells.", "D. All of the above."], answer: "A. HIV attacks and depletes CD4 T helper cells." },
+            { question: "In congenital rubella syndrome, what is the most frequent period for the risk of fetal harm to occur?", options: ["A. Second trimester", "B. Third trimester", "C. First trimester", "D. After birth"], answer: "C. First trimester" },
+            { question: "What is a key clinical finding during the acute stage of HIV infection?", options: ["A. Kaposi sarcoma", "B. Fatigue and wasting", "C. Fever, sore throat, and maculopapular rash", "D. Asymptomatic with low viremia"], answer: "C. Fever, sore throat, and maculopapular rash" },
+            { question: "What is a characteristic of a Herpes simplex virus?", options: ["A. It is non-enveloped.", "B. It is a ssDNA virus.", "C. It has an icosahedral capsid and an envelope.", "D. It is a ssRNA virus."], answer: "C. It has an icosahedral capsid and an envelope." },
+            { question: "What is the clinical finding in an affected baby with congenital CMV infection?", options: ["A. Hydrops fetalis", "B. \"Slapped cheek\" rash", "C. Intrauterine growth retardation and hepatosplenomegaly", "D. Keratoconjunctivitis"], answer: "C. Intrauterine growth retardation and hepatosplenomegaly" },
+            { question: "What is the name of the condition caused by the Human B19 virus that targets immature cells of the erythroid lineage?", options: ["A. Aplastic crisis", "B. Myeloproliferative disorder", "C. Thrombocytopenia", "D. Chronic diarrhea"], answer: "A. Aplastic crisis" },
+            { question: "What is the key structural feature of the rubella virus?", options: ["A. It is a dsDNA virus.", "B. It has an icosahedral capsid and an envelope.", "C. It is an ssRNA virus with cubic symmetry and an envelope.", "D. It is a non-enveloped virus."], answer: "C. It is an ssRNA virus with cubic symmetry and an envelope." },
+            { question: "Which of the following is a teratogenic effect of congenital rubella syndrome?", options: ["A. Aplastic crisis", "B. Heart defects and deafness", "C. Myeloproliferative disorder", "D. Kaposi sarcoma"], answer: "B. Heart defects and deafness" },
+            { question: "What is the main target for HIV attachment and infection?", options: ["A. B cells", "B. CD4 T helper cells", "C. Neutrophils", "D. Macrophages only"], answer: "B. CD4 T helper cells" },
+            { question: "Which of the following is a characteristic of all Herpesvirus species?", options: ["A. They cause a maculopapular rash.", "B. They only infect children.", "C. They are transmitted by sexual contact only.", "D. They have the ability to enter a latent state."], answer: "D. They have the ability to enter a latent state." }
+        ];
+
+        const userAnswers = [];
+
+        const questionElement = document.getElementById('quiz-question');
+        const optionsElement = document.getElementById('quiz-options');
+        const nextButton = document.getElementById('quiz-next-button');
+        const feedbackElement = document.getElementById('quiz-feedback');
+        const modal = document.getElementById('quiz-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const quizReview = document.getElementById('quiz-review');
+        const modalCloseButton = document.getElementById('modal-close-button');
+        const progressBar = document.getElementById('progress-bar');
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function updateProgressBar() {
+            const progressPercentage = ((currentQuestionIndex) / questions.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionElement.textContent = currentQuestion.question;
+            optionsElement.innerHTML = '';
+            feedbackElement.textContent = '';
+            nextButton.style.display = 'none';
+
+            const shuffledOptions = shuffle([...currentQuestion.options]);
+
+            shuffledOptions.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.classList.add('w-full', 'py-2', 'px-4', 'bg-purple-200', 'rounded-lg', 'text-gray-800', 'font-medium', 'hover:bg-purple-300', 'transition', 'duration-200', 'transform', 'hover:scale-105');
+                button.addEventListener('click', () => selectOption(option));
+                optionsElement.appendChild(button);
+            });
+            updateProgressBar();
+        }
+
+        function selectOption(selectedOption) {
+            const currentQuestion = questions[currentQuestionIndex];
+            const isCorrect = selectedOption === currentQuestion.answer;
+
+            userAnswers.push({
+                question: currentQuestion.question,
+                selected: selectedOption,
+                correct: currentQuestion.answer,
+                isCorrect: isCorrect
+            });
+
+            if (isCorrect) {
+                feedbackElement.textContent = 'Correct Answer!';
+                feedbackElement.classList.remove('text-red-500');
+                feedbackElement.classList.add('text-green-600');
+                score++;
+            } else {
+                feedbackElement.textContent = `Wrong Answer. The correct answer is: ${currentQuestion.answer}`;
+                feedbackElement.classList.remove('text-green-600');
+                feedbackElement.classList.add('text-red-500');
+            }
+
+            Array.from(optionsElement.children).forEach(button => {
+                button.disabled = true;
+                if (button.textContent === currentQuestion.answer) {
+                    button.classList.add('bg-green-500', 'text-white');
+                    button.classList.remove('bg-purple-200', 'hover:bg-purple-300');
+                } else if (button.textContent === selectedOption) {
+                    button.classList.add('bg-red-500', 'text-white');
+                    button.classList.remove('bg-purple-200', 'hover:bg-purple-300');
+                }
+                button.classList.remove('hover:scale-105');
+            });
+
+            nextButton.style.display = 'block';
+        }
+
+        function handleNextButton() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            const totalQuestions = questions.length;
+            const percentage = (score / totalQuestions) * 100;
+
+            modalTitle.textContent = "Quiz Results";
+            modalMessage.textContent = `Your score: ${score} / ${totalQuestions}, ${percentage.toFixed(0)}%`;
+
+            displayReview();
+            modal.classList.remove('hidden');
+            nextButton.style.display = 'none';
+            document.getElementById('quiz-container').classList.add('hidden');
+        }
+
+        function displayReview() {
+            quizReview.innerHTML = '<h3 class="text-xl font-bold mb-4">Answer Review</h3>';
+            userAnswers.forEach((answer, index) => {
+                const reviewItem = document.createElement('div');
+                reviewItem.classList.add('review-item');
+                
+                const questionTitle = document.createElement('p');
+                questionTitle.classList.add('font-semibold', 'mb-2');
+                questionTitle.textContent = `Question ${index + 1}: ${answer.question}`;
+                reviewItem.appendChild(questionTitle);
+
+                const yourAnswer = document.createElement('p');
+                yourAnswer.textContent = `Your Answer: ${answer.selected}`;
+                if (answer.isCorrect) {
+                    yourAnswer.classList.add('correct-answer');
+                } else {
+                    yourAnswer.classList.add('wrong-answer');
+                    const correctAnswer = document.createElement('p');
+                    correctAnswer.textContent = `Correct Answer: ${answer.correct}`;
+                    correctAnswer.classList.add('correct-answer');
+                    reviewItem.appendChild(correctAnswer);
+                }
+                reviewItem.appendChild(yourAnswer);
+                
+                quizReview.appendChild(reviewItem);
+            });
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.length = 0;
+            modal.classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            showQuestion();
+            nextButton.textContent = 'Next Question';
+        }
+
+        nextButton.addEventListener('click', handleNextButton);
+        modalCloseButton.addEventListener('click', restartQuiz);
+
+        showQuestion();
+    </script>
+
+</body>
+</html>
+
